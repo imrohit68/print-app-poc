@@ -1,12 +1,13 @@
 package com.example.PrintAppPOC.Entity;
 
-import jakarta.persistence.*;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.List;
 
 @Entity
 @Getter
@@ -15,7 +16,8 @@ import java.util.List;
 @AllArgsConstructor
 public class Store {
     @Id
-    private Integer mobileNumber;
+    private String mobileNumber;
     private String storeName;
-    private String location;
+    private float longitude;
+    private float latitude;
 }

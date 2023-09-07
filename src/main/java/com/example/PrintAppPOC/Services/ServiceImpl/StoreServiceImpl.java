@@ -26,11 +26,12 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public StoreDto updateStore(StoreDto storeDto, Integer id) {
+    public StoreDto updateStore(StoreDto storeDto, String id) {
         //Exception
         Store store = storeRepo.findById(id).orElseThrow();
         store.setStoreName(storeDto.getStoreName());
-        store.setLocation(storeDto.getLocation());
+        store.setLatitude(storeDto.getLatitude());
+        store.setLongitude(storeDto.getLongitude());
         Store store1 = storeRepo.save(store);
         return modelMapper.map(store1,StoreDto.class);
     }
@@ -43,14 +44,14 @@ public class StoreServiceImpl implements StoreService {
     }
 
     @Override
-    public StoreDto findStoreById(Integer id) {
+    public StoreDto findStoreById(String id) {
         //Exception
         Store store = storeRepo.findById(id).orElseThrow();
         return modelMapper.map(store,StoreDto.class);
     }
 
     @Override
-    public void deleteStore(Integer id) {
+    public void deleteStore(String id) {
         //Exception
         Store store = storeRepo.findById(id).orElseThrow();
         storeRepo.delete(store);

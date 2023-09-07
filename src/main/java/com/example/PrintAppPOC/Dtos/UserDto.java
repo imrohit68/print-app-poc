@@ -1,17 +1,18 @@
 package com.example.PrintAppPOC.Dtos;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
-public class StoreDto {
+public class UserDto {
     private String mobileNumber;
-    private String storeName;
-    private float longitude;
-    private float latitude;
+    private String username;
+    private String name;
+    private Integer storeId;
 }

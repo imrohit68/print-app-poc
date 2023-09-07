@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigInteger;
 import java.util.List;
 
 @Entity
@@ -19,7 +20,10 @@ public class Orders {
     private Integer id;
     @OneToMany
     private List<Files> fileNames;
+    private BigInteger orderAmount;
     @ManyToOne
     private Store store;
+    @ManyToOne
+    private Users user;
 
 }

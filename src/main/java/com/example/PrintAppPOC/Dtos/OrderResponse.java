@@ -7,11 +7,11 @@ import lombok.Setter;
 
 @Getter
 @Setter
-@NoArgsConstructor
 @AllArgsConstructor
-public class StoreDto {
-    private String mobileNumber;
-    private String storeName;
-    private float longitude;
-    private float latitude;
+@NoArgsConstructor
+public class OrderResponse {
+    String secretKey;
+    String razorpayOrderId;
+    String applicationFee;
+    String secretId;
 }

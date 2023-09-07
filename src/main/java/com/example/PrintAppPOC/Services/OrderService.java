@@ -6,10 +6,11 @@ import java.util.List;
 
 
 public interface OrderService {
-    OrderDto createOrder(OrderDto orderDto);
+    OrderDto createOrder(OrderDto orderDto,String storeId,String userId);
     OrderDto updateOrder(OrderDto orderDto,Integer id);
     OrderDto getOrderById(Integer orderId);
     List<OrderDto> getAllOrder();
     void deleteOrder(Integer orderId);
-    List<OrderDto> orderByStore(Integer storeId);
+    List<OrderDto> orderByStore(String storeId);
+    List<OrderDto> orderByUser(String userId);
 }

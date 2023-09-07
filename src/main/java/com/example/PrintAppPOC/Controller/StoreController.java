@@ -20,7 +20,7 @@ public class StoreController {
         return new ResponseEntity<>(storeDto1,HttpStatus.CREATED);
     }
     @PutMapping("/update/{storeId}")
-    public ResponseEntity<StoreDto> updateStore(@RequestBody StoreDto storeDto,@PathVariable Integer storeId){
+    public ResponseEntity<StoreDto> updateStore(@RequestBody StoreDto storeDto,@PathVariable String storeId){
         StoreDto storeDto1 = storeService.updateStore(storeDto,storeId);
         return new ResponseEntity<>(storeDto1,HttpStatus.OK);
     }
@@ -30,12 +30,12 @@ public class StoreController {
         return ResponseEntity.ok(storeDto);
     }
     @GetMapping("getById/{storeId}")
-    public ResponseEntity<StoreDto> getStoreById(@PathVariable Integer storeId){
+    public ResponseEntity<StoreDto> getStoreById(@PathVariable String storeId){
         StoreDto storeDto = storeService.findStoreById(storeId);
         return ResponseEntity.ok(storeDto);
     }
     @DeleteMapping("delete/{storeId}")
-    public String deleteStoreById(@PathVariable Integer storeId){
+    public String deleteStoreById(@PathVariable String storeId){
         storeService.deleteStore(storeId);
         return "Deleted Successfully";
     }

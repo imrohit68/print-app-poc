@@ -15,9 +15,9 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
 
-    @PostMapping("create")
-    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto){
-        OrderDto order = orderService.createOrder(orderDto);
+    @PostMapping("create/{storeId}/{userId}")
+    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto,@PathVariable String storeId,@PathVariable String userId){
+        OrderDto order = orderService.createOrder(orderDto,storeId,userId);
         return new ResponseEntity<>(order, HttpStatus.CREATED);
     }
     @PutMapping("update/{orderId}")
@@ -31,8 +31,13 @@ public class OrderController {
         return new ResponseEntity<>(allOrder,HttpStatus.OK);
     }
     @GetMapping("getByStore/{storeId}")
-    public ResponseEntity<List<OrderDto>> getOrderByStore(@PathVariable Integer storeId){
+    public ResponseEntity<List<OrderDto>> getOrderByStore(@PathVariable String storeId){
         List<OrderDto> orderDto = orderService.orderByStore(storeId);
+        return new ResponseEntity<>(orderDto,HttpStatus.OK);
+    }
+    @GetMapping("getByUser/{userId}")
+    public ResponseEntity<List<OrderDto>> getOrderByUser(@PathVariable String userId){
+        List<OrderDto> orderDto = orderService.orderByUser(userId);
         return new ResponseEntity<>(orderDto,HttpStatus.OK);
     }
     @GetMapping("getById/{orderId}")
