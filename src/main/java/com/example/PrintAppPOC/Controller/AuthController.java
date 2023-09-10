@@ -52,7 +52,7 @@ public class AuthController {
         }
         return new ResponseEntity<>(new JwtAuthResponseDto(),HttpStatus.OK);
     }
-    @GetMapping( "requestOtp")
+    @GetMapping( "/requestOtp")
     public Map<String,Object> getOtp(@RequestBody OtpSendDto otpSendDto){
         Map<String,Object> returnMap=new HashMap<>();
         try{
