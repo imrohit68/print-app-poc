@@ -44,8 +44,8 @@ public class OtpService {
     }
 
     private String getRandomOTP(String phoneNo) {
-        String otp =  new DecimalFormat("000000")
-                .format(new Random().nextInt(999999));
+        String otp =  new DecimalFormat("0000")
+                .format(new Random().nextInt(9999));
         otpCache.put(phoneNo,otp);
         return otp;
     }
