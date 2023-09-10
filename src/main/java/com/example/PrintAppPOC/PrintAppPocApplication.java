@@ -13,7 +13,6 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.PostConstruct;
 
-
 @SpringBootApplication
 public class PrintAppPocApplication {
 	@Autowired

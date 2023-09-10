@@ -2,6 +2,7 @@ package com.example.PrintAppPOC.Services.ServiceImpl;
 
 import com.example.PrintAppPOC.Dtos.StoreDto;
 import com.example.PrintAppPOC.Entity.Store;
+import com.example.PrintAppPOC.Exception.ResourceNotFoundException;
 import com.example.PrintAppPOC.Repo.StoreRepo;
 import com.example.PrintAppPOC.Services.StoreService;
 import lombok.RequiredArgsConstructor;
@@ -10,8 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-//Exception Handling Required
-//MobileNumber change Implementation Required
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +26,8 @@ public class StoreServiceImpl implements StoreService {
 
     @Override
     public StoreDto updateStore(StoreDto storeDto, String id) {
-        //Exception
-        Store store = storeRepo.findById(id).orElseThrow();
+        Store store = storeRepo.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Store","storeId",id));
         store.setStoreName(storeDto.getStoreName());
         store.setLatitude(storeDto.getLatitude());
         store.setLongitude(storeDto.getLongitude());
@@ -39,21 +38,21 @@ public class StoreServiceImpl implements StoreService {
     @Override
     public List<StoreDto> getAllStores() {
         List<Store> stores = storeRepo.findAll();
-        List<StoreDto> storeDto = stores.stream().map(store -> modelMapper.map(store,StoreDto.class)).toList();
-        return storeDto;
+        return stores.stream()
+                .map(store -> modelMapper.map(store,StoreDto.class)).toList();
     }
 
     @Override
     public StoreDto findStoreById(String id) {
-        //Exception
-        Store store = storeRepo.findById(id).orElseThrow();
+        Store store = storeRepo.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Store","storeId",id));
         return modelMapper.map(store,StoreDto.class);
     }
 
     @Override
     public void deleteStore(String id) {
-        //Exception
-        Store store = storeRepo.findById(id).orElseThrow();
+        Store store = storeRepo.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("Store","storeId",id));
         storeRepo.delete(store);
     }
 }

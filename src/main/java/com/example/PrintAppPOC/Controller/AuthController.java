@@ -2,6 +2,7 @@ package com.example.PrintAppPOC.Controller;
 
 import com.example.PrintAppPOC.Dtos.JwtAuthRequestDto;
 import com.example.PrintAppPOC.Dtos.JwtAuthResponseDto;
+import com.example.PrintAppPOC.Dtos.OtpSendDto;
 import com.example.PrintAppPOC.Repo.UserRepo;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
 import com.example.PrintAppPOC.security.CustomUserDetailService;
@@ -51,11 +52,11 @@ public class AuthController {
         }
         return new ResponseEntity<>(new JwtAuthResponseDto(),HttpStatus.OK);
     }
-    @RequestMapping(value = "requestOtp/{phoneNo}",method = RequestMethod.GET)
-    public Map<String,Object> getOtp(@PathVariable String phoneNo){
+    @GetMapping( "requestOtp")
+    public Map<String,Object> getOtp(@RequestBody OtpSendDto otpSendDto){
         Map<String,Object> returnMap=new HashMap<>();
         try{
-            String otp = otpService.generateOtp(phoneNo);
+            String otp = otpService.generateOtp(otpSendDto.getMobileNumber());
             returnMap.put("otp", otp);
             returnMap.put("status","success");
             returnMap.put("message","Otp sent successfully");

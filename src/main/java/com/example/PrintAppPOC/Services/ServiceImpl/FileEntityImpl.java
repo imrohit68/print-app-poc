@@ -2,6 +2,7 @@ package com.example.PrintAppPOC.Services.ServiceImpl;
 
 import com.example.PrintAppPOC.Dtos.FileDto;
 import com.example.PrintAppPOC.Entity.Files;
+import com.example.PrintAppPOC.Exception.ResourceNotFoundException;
 import com.example.PrintAppPOC.Repo.FileRepo;
 import com.example.PrintAppPOC.Services.FileEntityService;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +28,8 @@ public class FileEntityImpl implements FileEntityService {
 
     @Override
     public FileDto updateFile(FileDto fileDto, String id) {
-        Files files = fileRepo.findById(id).orElseThrow();
+        Files files = fileRepo.findById(id)
+                .orElseThrow(()-> new ResourceNotFoundException("File","fileId",id));
         files.setColor(fileDto.getColor());
         files.setEndPage(fileDto.getEndPage());
         files.setStartPage(fileDto.getStartPage());
@@ -38,19 +40,22 @@ public class FileEntityImpl implements FileEntityService {
 
     @Override
     public FileDto getById(String fileId) {
-        Files files = fileRepo.findById(fileId).orElseThrow();
+        Files files = fileRepo.findById(fileId)
+                .orElseThrow(()-> new ResourceNotFoundException("File","fileId",fileId));
         return modelMapper.map(files,FileDto.class);
     }
     @Override
     public List<FileDto> getAllFiles() {
         List<Files> files = fileRepo.findAll();
-        List<FileDto> fileDto = files.stream().map(files1 -> modelMapper.map(files1,FileDto.class)).collect(Collectors.toList());
+        List<FileDto> fileDto = files
+                .stream().map(files1 -> modelMapper.map(files1,FileDto.class)).collect(Collectors.toList());
         return fileDto;
     }
 
     @Override
     public void deleteFile(String fileId) {
-        Files files = fileRepo.findById(fileId).orElseThrow();
+        Files files = fileRepo.findById(fileId)
+                .orElseThrow(()-> new ResourceNotFoundException("File","fileId",fileId));
         fileRepo.delete(files);
     }
 }

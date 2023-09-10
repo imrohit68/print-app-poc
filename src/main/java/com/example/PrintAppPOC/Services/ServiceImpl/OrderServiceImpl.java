@@ -4,6 +4,7 @@ import com.example.PrintAppPOC.Dtos.OrderDto;
 import com.example.PrintAppPOC.Entity.Orders;
 import com.example.PrintAppPOC.Entity.Store;
 import com.example.PrintAppPOC.Entity.Users;
+import com.example.PrintAppPOC.Exception.ResourceNotFoundException;
 import com.example.PrintAppPOC.Repo.OrderRepo;
 import com.example.PrintAppPOC.Repo.StoreRepo;
 import com.example.PrintAppPOC.Repo.UserRepo;
@@ -25,8 +26,10 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto createOrder(OrderDto orderDto,String storeId,String userId) {
         Orders order = modelMapper.map(orderDto,Orders.class);
-        Users users = userRepo.findById(userId).orElseThrow();
-        Store store = storeRepo.findById(storeId).orElseThrow();
+        Users users = userRepo.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User","mobileNumber",userId));
+        Store store = storeRepo.findById(storeId)
+                .orElseThrow(()->new ResourceNotFoundException("Store","storeId",storeId));
         order.setUser(users);
         order.setStore(store);
         Orders orders = orderRepo.save(order);
@@ -35,14 +38,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDto updateOrder(OrderDto orderDto, Integer id) {
-        Orders orders = orderRepo.findById(id).orElseThrow();
+        Orders orders = orderRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Order","orderId",id.toString()));
         orders.setFileNames(orderDto.getFileNames());
         return modelMapper.map(orders,OrderDto.class);
     }
 
     @Override
     public OrderDto getOrderById(Integer orderId) {
-        Orders orders = orderRepo.findById(orderId).orElseThrow();
+        Orders orders = orderRepo.findById(orderId)
+                .orElseThrow(()-> new ResourceNotFoundException("Order","orderId",orderId.toString()));
         return modelMapper.map(orders,OrderDto.class);
     }
 
@@ -57,13 +61,15 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void deleteOrder(Integer orderId) {
-        Orders orders = orderRepo.findById(orderId).orElseThrow();
+        Orders orders = orderRepo.findById(orderId)
+                .orElseThrow(()-> new ResourceNotFoundException("Order","orderId",orderId.toString()));
         orderRepo.delete(orders);
     }
 
     @Override
     public List<OrderDto> orderByStore(String storeId) {
-        Store store = storeRepo.findById(storeId).orElseThrow();
+        Store store = storeRepo.findById(storeId)
+                .orElseThrow(()->new ResourceNotFoundException("Store","storeId",storeId));
         List<Orders> orderDto = orderRepo.findByStore(store);
         List<OrderDto> order = orderDto.stream()
                 .map(orders -> modelMapper.map(orders,OrderDto.class)).collect(Collectors.toList());
@@ -72,7 +78,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public List<OrderDto> orderByUser(String userId) {
-        Users user = userRepo.findById(userId).orElseThrow();
+        Users user = userRepo.findById(userId)
+                .orElseThrow(()-> new ResourceNotFoundException("User","mobileNumber",userId));
         List<Orders> orders = orderRepo.findByUser(user);
         List<OrderDto> orderDto = orders.stream().map(orders1 -> modelMapper.map(orders1,OrderDto.class)).collect(Collectors.toList());
         return orderDto;
