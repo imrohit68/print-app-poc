@@ -52,20 +52,16 @@ public class AuthController {
         }
         return new ResponseEntity<>(new JwtAuthResponseDto(),HttpStatus.OK);
     }
-    @GetMapping( "/requestOtp")
-    public Map<String,Object> getOtp(@RequestBody OtpSendDto otpSendDto){
+    @PostMapping ( "/requestOtp")
+    public ResponseEntity<String> getOtp(@RequestBody OtpSendDto otpSendDto){
         Map<String,Object> returnMap=new HashMap<>();
         try{
-            String otp = otpService.generateOtp(otpSendDto.getMobileNumber());
-            returnMap.put("otp", otp);
-            returnMap.put("status","success");
-            returnMap.put("message","Otp sent successfully");
-        }catch (Exception e){
-            returnMap.put("status","failed");
-            returnMap.put("message",e.getMessage());
-        }
+            otpService.generateOtp(otpSendDto.getMobileNumber());
+            return ResponseEntity.ok("True");
 
-        return returnMap;
+        }catch (Exception e){
+            return new ResponseEntity<>("False",HttpStatus.SERVICE_UNAVAILABLE);
+        }
     }
 
     private void authenticate(String username) {
