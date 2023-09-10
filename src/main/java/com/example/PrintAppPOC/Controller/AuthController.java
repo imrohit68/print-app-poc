@@ -1,11 +1,10 @@
 package com.example.PrintAppPOC.Controller;
 
-import com.example.PrintAppPOC.Dtos.JwtAuthRequestDto;
-import com.example.PrintAppPOC.Dtos.JwtAuthResponseDto;
-import com.example.PrintAppPOC.Dtos.OtpSendDto;
-import com.example.PrintAppPOC.Dtos.StatusResponse;
+import com.example.PrintAppPOC.Dtos.*;
+import com.example.PrintAppPOC.Exception.CantCreateToken;
 import com.example.PrintAppPOC.Repo.UserRepo;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
+import com.example.PrintAppPOC.Services.UserService;
 import com.example.PrintAppPOC.security.CustomUserDetailService;
 import com.example.PrintAppPOC.security.JwtTokenHelper;
 import lombok.RequiredArgsConstructor;
@@ -13,11 +12,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -27,9 +24,10 @@ public class AuthController {
     private final CustomUserDetailService customUserDetailService;
     private final AuthenticationManager authenticationManager;
     private final OtpService otpService;
+    private final UserService userService;
     private final UserRepo userRepo;
     @PostMapping("/login")
-    public ResponseEntity<JwtAuthResponseDto> createToken(@RequestBody JwtAuthRequestDto request){
+    public ResponseEntity<CreateTokenResponse> createToken(@RequestBody JwtAuthRequestDto request){
         try {
             if(request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))){
                 this.authenticate(request.getMobileNumber());
@@ -40,18 +38,15 @@ public class AuthController {
                     jwtAuthResponse.setUserId(request.getMobileNumber());
                 }
                 jwtAuthResponse.setToken(token);
-                return new ResponseEntity<>(jwtAuthResponse,HttpStatus.OK);
+                return new ResponseEntity<>(new CreateTokenResponse("success",jwtAuthResponse),HttpStatus.OK);
             }
             else{
-                JwtAuthResponseDto jwtAuthResponse = new JwtAuthResponseDto();
-                jwtAuthResponse.setToken("wrong otp");
-                return new ResponseEntity<>(jwtAuthResponse,HttpStatus.OK);
+                throw new CantCreateToken("Wrong Otp");
             }
         }
         catch (Exception e){
-            System.out.println(e);
+            throw new CantCreateToken(e.getMessage());
         }
-        return new ResponseEntity<>(new JwtAuthResponseDto(),HttpStatus.OK);
     }
     @PostMapping ( "/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendDto otpSendDto){
