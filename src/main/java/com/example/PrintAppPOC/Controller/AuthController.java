@@ -3,6 +3,7 @@ package com.example.PrintAppPOC.Controller;
 import com.example.PrintAppPOC.Dtos.JwtAuthRequestDto;
 import com.example.PrintAppPOC.Dtos.JwtAuthResponseDto;
 import com.example.PrintAppPOC.Dtos.OtpSendDto;
+import com.example.PrintAppPOC.Dtos.StatusResponse;
 import com.example.PrintAppPOC.Repo.UserRepo;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
 import com.example.PrintAppPOC.security.CustomUserDetailService;
@@ -53,14 +54,13 @@ public class AuthController {
         return new ResponseEntity<>(new JwtAuthResponseDto(),HttpStatus.OK);
     }
     @PostMapping ( "/requestOtp")
-    public ResponseEntity<String> getOtp(@RequestBody OtpSendDto otpSendDto){
-        Map<String,Object> returnMap=new HashMap<>();
+    public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendDto otpSendDto){
         try{
             otpService.generateOtp(otpSendDto.getMobileNumber());
-            return ResponseEntity.ok("True");
+            return ResponseEntity.ok(new StatusResponse(true));
 
         }catch (Exception e){
-            return new ResponseEntity<>("False",HttpStatus.SERVICE_UNAVAILABLE);
+            return new ResponseEntity<>(new StatusResponse(false),HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
