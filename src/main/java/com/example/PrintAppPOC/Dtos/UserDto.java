@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 public class UserDto {
     private String mobileNumber;
-    private String username;
+    private String uniqueName;
     private String name;
     private Integer storeId;
 }

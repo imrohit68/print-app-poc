@@ -13,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class UserController {
     private final UserService userService;
-    @PostMapping("create")
+    @PostMapping("/create")
     public ResponseEntity<UserDto> createUser(@RequestBody UserDto userDto){
         UserDto userDto1 = userService.createUser(userDto);
         return ResponseEntity.ok(userDto1);

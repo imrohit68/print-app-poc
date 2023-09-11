@@ -17,7 +17,7 @@ public class Users implements UserDetails{
 
     @Id
     private String mobileNumber;
-    private String username;
+    private String uniqueName;
     private String name;
     private Integer storeId;
 

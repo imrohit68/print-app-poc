@@ -10,9 +10,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptions extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<String> resourceNotFoundExceptionHandler(ResourceNotFoundException ex){
-        String message = ex.getMessage();
-        return new ResponseEntity<>(message, HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex){
+        return new ResponseEntity<>(new ErrorResponse("error", ex.getMessage()),HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(CantCreateToken.class)
     public ResponseEntity<ErrorResponse> cantCreateToken(CantCreateToken message){

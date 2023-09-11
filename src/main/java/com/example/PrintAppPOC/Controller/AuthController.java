@@ -1,6 +1,7 @@
 package com.example.PrintAppPOC.Controller;
 
 import com.example.PrintAppPOC.Dtos.*;
+import com.example.PrintAppPOC.Entity.Users;
 import com.example.PrintAppPOC.Exception.CantCreateToken;
 import com.example.PrintAppPOC.Repo.UserRepo;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
@@ -21,22 +22,18 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AuthController {
     private final JwtTokenHelper jwtTokenHelper;
+    private final UserService userService;
     private final CustomUserDetailService customUserDetailService;
     private final AuthenticationManager authenticationManager;
     private final OtpService otpService;
-    private final UserService userService;
-    private final UserRepo userRepo;
     @PostMapping("/login")
     public ResponseEntity<CreateTokenResponse> createToken(@RequestBody JwtAuthRequestDto request){
         try {
+            JwtAuthResponseDto jwtAuthResponse = new JwtAuthResponseDto();
             if(request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))){
                 this.authenticate(request.getMobileNumber());
                 UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
                 String token = this.jwtTokenHelper.generateToken(userDetails);
-                JwtAuthResponseDto jwtAuthResponse = new JwtAuthResponseDto();
-                if (userRepo.existsUsersByMobileNumber(request.getMobileNumber())){
-                    jwtAuthResponse.setUserId(request.getMobileNumber());
-                }
                 jwtAuthResponse.setToken(token);
                 return new ResponseEntity<>(new CreateTokenResponse("success",jwtAuthResponse),HttpStatus.OK);
             }
@@ -47,6 +44,10 @@ public class AuthController {
         catch (Exception e){
             throw new CantCreateToken(e.getMessage());
         }
+    }
+    @GetMapping()
+    public ResponseEntity<UserDto> userDetails(@RequestBody JwtAuthResponseDto token){
+        return new ResponseEntity<>(userService.getByToken(token.getToken()),HttpStatus.OK);
     }
     @PostMapping ( "/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendDto otpSendDto){
