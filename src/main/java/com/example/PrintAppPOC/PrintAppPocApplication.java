@@ -1,7 +1,7 @@
 package com.example.PrintAppPOC;
 
 
-import com.example.PrintAppPOC.Config.TwilioConfig;
+import com.example.PrintAppPOC.Configurations.TwilioConfig;
 import com.twilio.Twilio;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;

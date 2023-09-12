@@ -1,13 +1,13 @@
 package com.example.PrintAppPOC.Services.ServiceImpl;
 
-import com.example.PrintAppPOC.Dtos.OrderDto;
-import com.example.PrintAppPOC.Entity.Orders;
-import com.example.PrintAppPOC.Entity.Store;
-import com.example.PrintAppPOC.Entity.Users;
-import com.example.PrintAppPOC.Exception.ResourceNotFoundException;
-import com.example.PrintAppPOC.Repo.OrderRepo;
-import com.example.PrintAppPOC.Repo.StoreRepo;
-import com.example.PrintAppPOC.Repo.UserRepo;
+import com.example.PrintAppPOC.DataTransferObjects.OrderDto;
+import com.example.PrintAppPOC.Entities.Orders;
+import com.example.PrintAppPOC.Entities.Store;
+import com.example.PrintAppPOC.Entities.Users;
+import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
+import com.example.PrintAppPOC.Repositories.OrderRepo;
+import com.example.PrintAppPOC.Repositories.StoreRepo;
+import com.example.PrintAppPOC.Repositories.UserRepo;
 import com.example.PrintAppPOC.Services.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;

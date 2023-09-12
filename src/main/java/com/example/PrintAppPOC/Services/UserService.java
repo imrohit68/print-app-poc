@@ -1,6 +1,6 @@
 package com.example.PrintAppPOC.Services;
 
-import com.example.PrintAppPOC.Dtos.UserDto;
+import com.example.PrintAppPOC.DataTransferObjects.UserDto;
 
 import java.util.List;
 

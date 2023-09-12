@@ -1,13 +1,11 @@
 package com.example.PrintAppPOC.Services.ServiceImpl;
 
-import com.example.PrintAppPOC.Dtos.UserDto;
-import com.example.PrintAppPOC.Entity.Users;
-import com.example.PrintAppPOC.Exception.MobileNumberValidationException;
-import com.example.PrintAppPOC.Exception.ResourceNotFoundException;
-import com.example.PrintAppPOC.Exception.UserAlreadyExistsException;
-import com.example.PrintAppPOC.Repo.UserRepo;
+import com.example.PrintAppPOC.DataTransferObjects.UserDto;
+import com.example.PrintAppPOC.Entities.Users;
+import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
+import com.example.PrintAppPOC.Repositories.UserRepo;
 import com.example.PrintAppPOC.Services.UserService;
-import com.example.PrintAppPOC.security.JwtTokenHelper;
+import com.example.PrintAppPOC.Security.JwtTokenHelper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;

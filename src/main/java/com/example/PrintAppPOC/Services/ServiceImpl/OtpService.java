@@ -1,6 +1,6 @@
 package com.example.PrintAppPOC.Services.ServiceImpl;
 
-import com.example.PrintAppPOC.Config.TwilioConfig;
+import com.example.PrintAppPOC.Configurations.TwilioConfig;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
