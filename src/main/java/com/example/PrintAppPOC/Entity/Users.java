@@ -2,6 +2,7 @@ package com.example.PrintAppPOC.Entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,10 +17,9 @@ import java.util.Collection;
 public class Users implements UserDetails{
 
     @Id
+    @NotBlank(message = "Number cannot be blank")
     private String mobileNumber;
-    private String uniqueName;
     private String name;
-    private Integer storeId;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

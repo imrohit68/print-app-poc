@@ -1,16 +1,13 @@
 package com.example.PrintAppPOC.Dtos;
 
-
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-public class UserDto {
-    private String mobileNumber;
-    private String name;
+public class JwtAuthRequestStore {
+    private String username;
+    private String password;
 }

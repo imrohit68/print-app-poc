@@ -10,11 +10,22 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptions extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<ErrorResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex){
-        return new ResponseEntity<>(new ErrorResponse("error", ex.getMessage()),HttpStatus.NOT_FOUND);
+    public ResponseEntity<ErrorResponse> resourceNotFoundExceptionHandler(ResourceNotFoundException ex) {
+        return new ResponseEntity<>(new ErrorResponse("error", ex.getMessage()), HttpStatus.NOT_FOUND);
     }
+
     @ExceptionHandler(CantCreateToken.class)
-    public ResponseEntity<ErrorResponse> cantCreateToken(CantCreateToken message){
-        return new ResponseEntity<>(new ErrorResponse("error",message.getMessage()),HttpStatus.INTERNAL_SERVER_ERROR);
+    public ResponseEntity<ErrorResponse> cantCreateToken(CantCreateToken message) {
+        return new ResponseEntity<>(new ErrorResponse("error", message.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException.class)
+    public ResponseEntity<ErrorResponse> userAlreadyExists(UserAlreadyExistsException ex) {
+        return new ResponseEntity<>(new ErrorResponse("error", ex.getMessage()), HttpStatus.NOT_ACCEPTABLE);
+    }
+
+    @ExceptionHandler(MobileNumberValidationException.class)
+    public ResponseEntity<ErrorResponse> inValidMobileNumber(MobileNumberValidationException ex) {
+        return new ResponseEntity<>(new ErrorResponse("error",ex.getMessage()),HttpStatus.NOT_ACCEPTABLE);
     }
 }

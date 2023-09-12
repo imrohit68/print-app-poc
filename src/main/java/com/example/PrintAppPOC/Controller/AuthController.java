@@ -1,9 +1,7 @@
 package com.example.PrintAppPOC.Controller;
 
 import com.example.PrintAppPOC.Dtos.*;
-import com.example.PrintAppPOC.Entity.Users;
 import com.example.PrintAppPOC.Exception.CantCreateToken;
-import com.example.PrintAppPOC.Repo.UserRepo;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
 import com.example.PrintAppPOC.Services.UserService;
 import com.example.PrintAppPOC.security.CustomUserDetailService;
@@ -13,7 +11,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,7 +56,6 @@ public class AuthController {
             return new ResponseEntity<>(new StatusResponse(false),HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
-
     private void authenticate(String username) {
         UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username," ");
         this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
