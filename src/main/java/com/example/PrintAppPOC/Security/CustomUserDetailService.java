@@ -1,6 +1,7 @@
 package com.example.PrintAppPOC.Security;
 
 import com.example.PrintAppPOC.Entities.Users;
+import com.example.PrintAppPOC.Exceptions.NewUserTokenException;
 import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
 import com.example.PrintAppPOC.Repositories.UserRepo;
 import lombok.RequiredArgsConstructor;
@@ -18,7 +19,7 @@ public class CustomUserDetailService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Users user =this.userRepo.findById(username)
-                .orElseThrow(()->new ResourceNotFoundException("User","mobileNumber",username));
+                .orElseThrow(()->new NewUserTokenException(username));
                 return user;
     }
 }
