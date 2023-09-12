@@ -2,6 +2,7 @@ package com.example.PrintAppPOC.Controller;
 
 import com.example.PrintAppPOC.Dtos.*;
 import com.example.PrintAppPOC.Exception.CantCreateToken;
+import com.example.PrintAppPOC.Exception.MobileNumberValidationException;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
 import com.example.PrintAppPOC.Services.UserService;
 import com.example.PrintAppPOC.security.CustomUserDetailService;
@@ -48,12 +49,20 @@ public class AuthController {
     }
     @PostMapping ( "/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendDto otpSendDto){
+        String  mobileNumber = otpSendDto.getMobileNumber();
+        if(mobileNumber==null){
+            throw new MobileNumberValidationException("please enter mobileNumber");
+        }
+        if(mobileNumber.length()!=13){
+            throw new MobileNumberValidationException("please enter a valid 10 digit mobileNumber");
+        }
         try{
             otpService.generateOtp(otpSendDto.getMobileNumber());
-            return ResponseEntity.ok(new StatusResponse(true));
+            return ResponseEntity.ok(new StatusResponse("otp sent successfully",true));
 
         }catch (Exception e){
-            return new ResponseEntity<>(new StatusResponse(false),HttpStatus.SERVICE_UNAVAILABLE);
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(new StatusResponse("something went wrong,please try again later",false),HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
     private void authenticate(String username) {

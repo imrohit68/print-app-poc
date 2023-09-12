@@ -1,6 +1,7 @@
 package com.example.PrintAppPOC.Exception;
 
 import com.example.PrintAppPOC.Dtos.ErrorResponse;
+import com.example.PrintAppPOC.Dtos.StatusResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -25,7 +26,7 @@ public class GlobalExceptions extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(MobileNumberValidationException.class)
-    public ResponseEntity<ErrorResponse> inValidMobileNumber(MobileNumberValidationException ex) {
-        return new ResponseEntity<>(new ErrorResponse("error",ex.getMessage()),HttpStatus.NOT_ACCEPTABLE);
+    public ResponseEntity<StatusResponse> inValidMobileNumber(MobileNumberValidationException ex) {
+        return new ResponseEntity<>(new StatusResponse(ex.getMessage(),false),HttpStatus.NOT_ACCEPTABLE);
     }
 }
