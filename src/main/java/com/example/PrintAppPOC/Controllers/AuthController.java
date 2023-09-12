@@ -3,6 +3,7 @@ package com.example.PrintAppPOC.Controllers;
 import com.example.PrintAppPOC.DataTransferObjects.*;
 import com.example.PrintAppPOC.Exceptions.CantCreateToken;
 import com.example.PrintAppPOC.Exceptions.MobileNumberValidationException;
+import com.example.PrintAppPOC.Exceptions.NewUserTokenException;
 import com.example.PrintAppPOC.Requests.JwtAuthRequest;
 import com.example.PrintAppPOC.Requests.OtpSendRequest;
 import com.example.PrintAppPOC.Responses.CreateTokenResponse;
@@ -31,7 +32,6 @@ public class AuthController {
     private final OtpService otpService;
     @PostMapping("/login")
     public ResponseEntity<CreateTokenResponse> createToken(@RequestBody JwtAuthRequest request){
-        try {
             if(request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))){
                 this.authenticate(request.getMobileNumber());
                 UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
@@ -40,13 +40,12 @@ public class AuthController {
                 CreateTokenResponse createTokenResponse = new CreateTokenResponse(false,token,userDto);
                 return new ResponseEntity<>(createTokenResponse,HttpStatus.OK);
             }
-            else{
+            else if(request.getOtp()!=(otpService.getCacheOtp(request.getMobileNumber()))){
                 throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
             }
-        }
-        catch (Exception e){
-            throw new CantCreateToken(e.getMessage());
-        }
+            else{
+                throw new CantCreateToken("Something went wrong. Please try again later");
+            }
     }
     @GetMapping()
     public ResponseEntity<UserDto> userDetails(@RequestBody JwtUserRequest token){
