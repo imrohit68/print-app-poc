@@ -51,18 +51,18 @@ public class AuthController {
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendDto otpSendDto){
         String  mobileNumber = otpSendDto.getMobileNumber();
         if(mobileNumber==null){
-            throw new MobileNumberValidationException("please enter mobileNumber");
+            throw new MobileNumberValidationException("Please enter mobile number");
         }
         if(mobileNumber.length()!=13){
-            throw new MobileNumberValidationException("please enter a valid 10 digit mobileNumber");
+            throw new MobileNumberValidationException("Please enter a valid 10 digit mobile number");
         }
         try{
             otpService.generateOtp(otpSendDto.getMobileNumber());
-            return ResponseEntity.ok(new StatusResponse("otp sent successfully",true));
+            return ResponseEntity.ok(new StatusResponse("OTP sent successfully",true));
 
         }catch (Exception e){
             System.out.println(e.getMessage());
-            return new ResponseEntity<>(new StatusResponse("something went wrong,please try again later",false),HttpStatus.SERVICE_UNAVAILABLE);
+            return new ResponseEntity<>(new StatusResponse("Something went wrong. Please try again later",false),HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
     private void authenticate(String username) {

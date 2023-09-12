@@ -24,17 +24,8 @@ public class UserImpl implements UserService {
     @Override
     public UserDto createUser(UserDto userDto) {
         Users user = modelMapper.map(userDto, Users.class);
-        String mobileNumber = userDto.getMobileNumber();
-        if(mobileNumber!=null&&mobileNumber.length()!=13){
-            throw new MobileNumberValidationException("please enter a valid 10 digit mobileNumber");
-        }
-        try{
-            Users user1 = userRepo.save(user);
-            return modelMapper.map(user1,UserDto.class);
-        }
-        catch (Exception e){
-            throw new MobileNumberValidationException("please enter mobileNumber");
-        }
+        Users user1 = userRepo.save(user);
+        return modelMapper.map(user1,UserDto.class);
     }
 
     @Override
