@@ -7,6 +7,7 @@ import com.example.PrintAppPOC.Requests.JwtAuthRequest;
 import com.example.PrintAppPOC.Requests.OtpSendRequest;
 import com.example.PrintAppPOC.Responses.CreateTokenResponse;
 import com.example.PrintAppPOC.Requests.JwtUserRequest;
+import com.example.PrintAppPOC.Responses.HomeResponse;
 import com.example.PrintAppPOC.Responses.StatusResponse;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
 import com.example.PrintAppPOC.Services.UserService;
@@ -47,8 +48,9 @@ public class AuthController {
             }
     }
     @GetMapping()
-    public ResponseEntity<UserDto> userDetails(@RequestBody JwtUserRequest token){
-        return new ResponseEntity<>(userService.getByToken(token.getToken()),HttpStatus.OK);
+    public ResponseEntity<HomeResponse> userDetails(@RequestHeader("Authorization") String token){
+        UserDto userDto = userService.getByToken(token.substring(7));
+        return new ResponseEntity<>(new HomeResponse(userDto.getMobileNumber(),userDto.getUserName(),token.substring(7)),HttpStatus.OK);
     }
     @PostMapping ( "/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendRequest otpSendDto){
