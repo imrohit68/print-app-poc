@@ -3,7 +3,6 @@ package com.example.PrintAppPOC.Controllers;
 import com.example.PrintAppPOC.DataTransferObjects.*;
 import com.example.PrintAppPOC.Exceptions.CantCreateToken;
 import com.example.PrintAppPOC.Exceptions.MobileNumberValidationException;
-import com.example.PrintAppPOC.Exceptions.NewUserTokenException;
 import com.example.PrintAppPOC.Requests.JwtAuthRequest;
 import com.example.PrintAppPOC.Requests.OtpSendRequest;
 import com.example.PrintAppPOC.Responses.CreateTokenResponse;
