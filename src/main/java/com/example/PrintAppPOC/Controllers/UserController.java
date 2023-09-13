@@ -1,16 +1,21 @@
 package com.example.PrintAppPOC.Controllers;
 
 import com.example.PrintAppPOC.DataTransferObjects.UserDto;
+import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
+import com.example.PrintAppPOC.Exceptions.UsernameConstraintException;
 import com.example.PrintAppPOC.Responses.CreateUserWithTokenResponse;
 import com.example.PrintAppPOC.Security.CustomUserDetailService;
 import com.example.PrintAppPOC.Security.JwtTokenHelper;
 import com.example.PrintAppPOC.Services.UserService;
+import jakarta.validation.ConstraintViolationException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.transaction.TransactionSystemException;
+import org.springframework.web.ErrorResponseException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -25,7 +30,12 @@ public class UserController {
     private final AuthenticationManager authenticationManager;
     @PostMapping("/create")
     public ResponseEntity<CreateUserWithTokenResponse> createUser(@RequestBody UserDto userDto){
-        userService.createUser(userDto);
+        try {
+            userService.createUser(userDto);
+        }
+        catch (TransactionSystemException ex){
+            throw new UsernameConstraintException("Invalid Username. The username must be between 2 to 20 characters.");
+        }
         this.authenticate(userDto.getMobileNumber());
         UserDetails userDetails = this.customUserDetailService.loadUserByUsername(userDto.getMobileNumber());
         String token = this.jwtTokenHelper.generateToken(userDetails);

@@ -34,4 +34,8 @@ public class GlobalExceptions extends ResponseEntityExceptionHandler {
     public ResponseEntity<NewUserResponse> newUSerResponse(NewUserTokenException ex){
         return new ResponseEntity<>(new NewUserResponse(true, ex.getMessage()),HttpStatus.OK);
     }
+    @ExceptionHandler(UsernameConstraintException.class)
+    public ResponseEntity<ErrorResponse> userNameNotValid(UsernameConstraintException ex){
+        return new ResponseEntity<>(new ErrorResponse(false, ex.getMessage()),HttpStatus.NOT_ACCEPTABLE);
+    }
 }
