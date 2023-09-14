@@ -6,7 +6,6 @@ import com.example.PrintAppPOC.Exceptions.MobileNumberValidationException;
 import com.example.PrintAppPOC.Requests.JwtAuthRequest;
 import com.example.PrintAppPOC.Requests.OtpSendRequest;
 import com.example.PrintAppPOC.Responses.CreateTokenResponse;
-import com.example.PrintAppPOC.Requests.JwtUserRequest;
 import com.example.PrintAppPOC.Responses.HomeResponse;
 import com.example.PrintAppPOC.Responses.StatusResponse;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
@@ -50,7 +49,7 @@ public class AuthController {
     @GetMapping()
     public ResponseEntity<HomeResponse> userDetails(@RequestHeader("Authorization") String token){
         UserDto userDto = userService.getByToken(token.substring(7));
-        return new ResponseEntity<>(new HomeResponse(userDto.getMobileNumber(),userDto.getUserName(),token.substring(7)),HttpStatus.OK);
+        return new ResponseEntity<>(new HomeResponse(userDto.getMobileNumber(),userDto.getName(),token.substring(7)),HttpStatus.OK);
     }
     @PostMapping ( "/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendRequest otpSendDto){

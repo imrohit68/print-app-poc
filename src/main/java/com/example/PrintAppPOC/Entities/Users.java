@@ -20,9 +20,8 @@ public class Users implements UserDetails{
     @Id
     @NotBlank(message = "Number cannot be blank")
     private String mobileNumber;
-    @NotBlank
     @Size(min = 2,max = 20)
-    private String userName;
+    private String name;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

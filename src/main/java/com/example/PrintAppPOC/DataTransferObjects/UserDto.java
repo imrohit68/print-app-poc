@@ -12,5 +12,5 @@ import lombok.Setter;
 @Setter
 public class UserDto {
     private String mobileNumber;
-    private String userName;
+    private String name;
 }
