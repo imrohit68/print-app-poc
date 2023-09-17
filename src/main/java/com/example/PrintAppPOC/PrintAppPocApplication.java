@@ -3,6 +3,8 @@ package com.example.PrintAppPOC;
 
 import com.example.PrintAppPOC.Configurations.TwilioConfig;
 import com.twilio.Twilio;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
@@ -13,6 +15,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.PostConstruct;
 @SpringBootApplication
+@OpenAPIDefinition(servers = {@Server(url = "/", description = "Default Server URL")})
 public class PrintAppPocApplication {
 	@Autowired
 	private TwilioConfig twilioConfig;
