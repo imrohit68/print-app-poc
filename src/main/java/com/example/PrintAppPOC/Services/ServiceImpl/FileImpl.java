@@ -4,7 +4,7 @@ import com.example.PrintAppPOC.DataTransferObjects.FileDto;
 import com.example.PrintAppPOC.Entities.Files;
 import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
 import com.example.PrintAppPOC.Repositories.FileRepo;
-import com.example.PrintAppPOC.Services.FileEntityService;
+import com.example.PrintAppPOC.Services.FileService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class FileEntityImpl implements FileEntityService {
+public class FileImpl implements FileService {
     private final FileRepo fileRepo;
     private final ModelMapper modelMapper;
 

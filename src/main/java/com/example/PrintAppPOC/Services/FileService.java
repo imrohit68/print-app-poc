@@ -1,14 +1,14 @@
 package com.example.PrintAppPOC.Services;
 
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.web.multipart.MultipartFile;
+import com.example.PrintAppPOC.DataTransferObjects.FileDto;
 
-import java.io.IOException;
 import java.util.List;
 
+
 public interface FileService {
-    List<String> listOfFiles();
-    ByteArrayResource downloadFile(String fileName);
-    boolean deleteFile(String fileName);
-    String uploadFile(MultipartFile file) throws IOException;
+    FileDto createFile(FileDto fileDto);
+    FileDto updateFile(FileDto fileDto,String id);
+    FileDto getById(String fileId);
+    List<FileDto> getAllFiles();
+    void deleteFile(String fileId);
 }

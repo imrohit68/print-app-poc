@@ -17,12 +17,7 @@ public class JwtTokenHelper {
     private String SECRET_KEY = "5166546A576E5A7234753777217A25432A462D4A614E645267556B5870327335";
 
     public String extractUsername(String token) {
-        try{
             return extractClaim(token, Claims::getSubject);
-        }
-        catch (Exception e){
-            throw new CantCreateToken("You are no authorized");
-        }
     }
 
     public Date extractExpiration(String token) {

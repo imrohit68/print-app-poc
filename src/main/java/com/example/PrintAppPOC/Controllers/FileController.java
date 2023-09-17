@@ -1,62 +1,42 @@
 package com.example.PrintAppPOC.Controllers;
 
-
+import com.example.PrintAppPOC.DataTransferObjects.FileDto;
 import com.example.PrintAppPOC.Services.FileService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.Resource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/files")
+@RequestMapping("api/file")
 @RequiredArgsConstructor
 public class FileController {
-    private final FileService fileService;
-    @GetMapping
-    public ResponseEntity<List<String>> listOfFiles() {
+    private final FileService fileEntityService;
 
-        List<String> files = fileService.listOfFiles();
-
-        return ResponseEntity.ok(files);
+    @PostMapping("create")
+    public ResponseEntity<FileDto> create(@RequestBody FileDto fileDto){
+        FileDto fileDto1 = fileEntityService.createFile(fileDto);
+        return new ResponseEntity<>(fileDto1, HttpStatus.CREATED);
     }
-
-    @PostMapping("upload")
-    public ResponseEntity<String> uploadFile(
-            @RequestParam MultipartFile file) throws IOException {
-
-        String fileId = fileService.uploadFile(file);
-
-        return ResponseEntity.ok("File uploaded successfully : "+fileId);
+    @PutMapping("update/{fileId}")
+    public ResponseEntity<FileDto> update(@RequestBody FileDto fileDto,@PathVariable String fileId){
+        FileDto fileDto1 = fileEntityService.updateFile(fileDto,fileId);
+        return new ResponseEntity<>(fileDto1,HttpStatus.OK);
     }
-
-    @DeleteMapping("delete")
-    public ResponseEntity<String> deleteFile(
-            @RequestParam String fileName) {
-
-        fileService.deleteFile(fileName);
-
-        return ResponseEntity.ok(" File deleted successfully");
+    @GetMapping("getAll")
+    public ResponseEntity<List<FileDto>> getAll(){
+        List<FileDto> fileDto = fileEntityService.getAllFiles();
+        return new ResponseEntity<>(fileDto,HttpStatus.OK);
     }
-
-    @GetMapping("download")
-    public ResponseEntity<Resource> downloadFile(
-            @RequestParam String fileName)  {
-
-        ByteArrayResource resource = fileService.downloadFile(fileName);
-
-        HttpHeaders headers = new HttpHeaders();
-        headers.add(HttpHeaders.CONTENT_DISPOSITION,
-                "attachment; filename=\"" + fileName + "\"");
-
-        return ResponseEntity.ok().
-                contentType(MediaType.APPLICATION_OCTET_STREAM).
-                headers(headers).body(resource);
+    @GetMapping("getById/{fileId}")
+    public ResponseEntity<FileDto> getFileById(@PathVariable String fileId){
+        FileDto fileDto = fileEntityService.getById(fileId);
+        return new ResponseEntity<>(fileDto,HttpStatus.OK);
+    }
+    @DeleteMapping("delete/{fileId}")
+    public String deleteFile(@PathVariable String fileId){
+        fileEntityService.deleteFile(fileId);
+        return "Deleted Successfully";
     }
 }

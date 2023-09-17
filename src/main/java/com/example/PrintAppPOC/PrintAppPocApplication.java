@@ -12,7 +12,6 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.PostConstruct;
-
 @SpringBootApplication
 public class PrintAppPocApplication {
 	@Autowired
@@ -38,5 +37,4 @@ public class PrintAppPocApplication {
 	public void initTwilio(){
 		Twilio.init(twilioConfig.getAccountSid(),twilioConfig.getAuthToken());
 	}
-
 }

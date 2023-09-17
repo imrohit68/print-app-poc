@@ -48,8 +48,13 @@ public class AuthController {
     }
     @GetMapping()
     public ResponseEntity<HomeResponse> userDetails(@RequestHeader("Authorization") String token){
-        UserDto userDto = userService.getByToken(token.substring(7));
-        return new ResponseEntity<>(new HomeResponse(userDto.getMobileNumber(),userDto.getName(),token.substring(7)),HttpStatus.OK);
+        try{
+            UserDto userDto = userService.getByToken(token.substring(7));
+            return new ResponseEntity<>(new HomeResponse(userDto.getMobileNumber(),userDto.getName(),token.substring(7)),HttpStatus.OK);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+        return null;
     }
     @PostMapping ( "/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendRequest otpSendDto){
