@@ -22,7 +22,7 @@ jobs:
       - name: Build docker image
         run: docker build -t print-app-poc/print-app .
       - name: Publish image to docker hub
-        run: docker push print-app-poc/print-app:latest
+        run: docker push imrohit68/print-app-poc:tagname
 
   deploy:
     needs: build
