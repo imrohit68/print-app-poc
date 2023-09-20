@@ -50,8 +50,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request,response);
         }catch (JwtException ex){
-            System.out.println("hello world");
-            System.out.println("------------");
             throw new InvalidTokenException("Authorization Failed");
         }
 
