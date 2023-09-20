@@ -33,4 +33,4 @@ jobs:
       - name: Delete old container
         run: sudo docker rm -f print-app-container
       - name: Run docker container
-        run: sudo docker run -d -p 80:80 --name print-app-container print-app-poc/print-app
+        run: sudo docker run -d -p 80:80 --name print-app-container imrohit68/print-app-poc
