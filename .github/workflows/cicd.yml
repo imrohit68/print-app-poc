@@ -1,0 +1,36 @@
+name: CICD
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: [ubuntu-latest]
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v3
+      - name: Setup Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+      - name: Build Project
+        run: mvn clean install -DskipTests
+      - name: Login to docker hub
+        run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
+      - name: Build docker image
+        run: docker build -t print-app-poc/print-app .
+      - name: Publish image to docker hub
+        run: docker push print-app-poc/print-app:latest
+
+  deploy:
+    needs: build
+    runs-on: [ip-172-31-8-15]
+    steps:
+      - name: Pull Image from docker hub
+        run: docker pull print-app-poc/print-app:latest
+      - name: Delete old container
+        run: docker rm -f print-app-container
+      - name: Run docker container
+        run: docker run -d -p 80:80 --name print-app-container print-app-poc/print-app
