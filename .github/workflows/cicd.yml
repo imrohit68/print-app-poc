@@ -20,16 +20,16 @@ jobs:
       - name: Login to docker hub
         run: docker login -u ${{secrets.DOCKER_USERNAME}} -p ${{secrets.DOCKER_PASSWORD}}
       - name: Build docker image
-        run: docker build -t print-app-poc/print-app .
+        run: docker build -t imrohit68/print-app-poc .
       - name: Publish image to docker hub
-        run: docker push imrohit68/print-app-poc:tagname
+        run: docker push imrohit68/print-app-poc:latest
 
   deploy:
     needs: build
     runs-on: [ip-172-31-8-15]
     steps:
       - name: Pull Image from docker hub
-        run: docker pull print-app-poc/print-app:latest
+        run: docker pull imrohit68/print-app-poc:latest
       - name: Delete old container
         run: docker rm -f print-app-container
       - name: Run docker container
