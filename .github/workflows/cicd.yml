@@ -29,8 +29,8 @@ jobs:
     runs-on: [self-hosted]
     steps:
       - name: Pull Image from docker hub
-        run: docker pull imrohit68/print-app-poc:latest
+        run: sudo docker pull imrohit68/print-app-poc:latest
       - name: Delete old container
-        run: docker rm -f print-app-container
+        run: sudo docker rm -f print-app-container
       - name: Run docker container
-        run: docker run -d -p 80:80 --name print-app-container print-app-poc/print-app
+        run: sudo docker run -d -p 80:80 --name print-app-container print-app-poc/print-app
