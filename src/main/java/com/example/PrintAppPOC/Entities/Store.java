@@ -21,7 +21,7 @@ public class Store  {
     private String storeName;
     private String storeUsername;
     private String password;
-    private float longitude;
-    private float latitude;
+    private String longitude;
+    private String latitude;
 
 }
