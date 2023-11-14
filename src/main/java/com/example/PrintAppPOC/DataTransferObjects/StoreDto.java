@@ -12,6 +12,6 @@ import lombok.Setter;
 public class StoreDto {
     private String mobileNumber;
     private String storeName;
-    private float longitude;
-    private float latitude;
+    private String longitude;
+    private String latitude;
 }
