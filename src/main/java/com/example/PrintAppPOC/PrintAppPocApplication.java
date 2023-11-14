@@ -14,6 +14,8 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.annotation.PostConstruct;
+
+//Test
 @SpringBootApplication
 @OpenAPIDefinition(servers = {@Server(url = "/", description = "Default Server URL")})
 public class PrintAppPocApplication {
