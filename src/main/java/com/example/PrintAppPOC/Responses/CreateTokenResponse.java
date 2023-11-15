@@ -10,6 +10,5 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class CreateTokenResponse {
     private boolean newUser;
-    private String token;
-    private UserDto user;
+    private Info data;
 }

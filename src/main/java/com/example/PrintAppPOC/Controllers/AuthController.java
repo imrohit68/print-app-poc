@@ -7,6 +7,7 @@ import com.example.PrintAppPOC.Requests.JwtAuthRequest;
 import com.example.PrintAppPOC.Requests.OtpSendRequest;
 import com.example.PrintAppPOC.Responses.CreateTokenResponse;
 import com.example.PrintAppPOC.Responses.HomeResponse;
+import com.example.PrintAppPOC.Responses.Info;
 import com.example.PrintAppPOC.Responses.StatusResponse;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
 import com.example.PrintAppPOC.Services.UserService;
@@ -36,7 +37,11 @@ public class AuthController {
                 UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
                 String token = this.jwtTokenHelper.generateToken(userDetails);
                 UserDto userDto = userService.getByToken(token);
-                CreateTokenResponse createTokenResponse = new CreateTokenResponse(false,token,userDto);
+                Info data = new Info();
+                data.setToken(token);
+                data.setUserName(userDto.getName());
+                data.setMobileNumber(userDto.getMobileNumber());
+                CreateTokenResponse createTokenResponse = new CreateTokenResponse(false,data);
                 return new ResponseEntity<>(createTokenResponse,HttpStatus.OK);
             }
             else if(request.getOtp()!=(otpService.getCacheOtp(request.getMobileNumber()))){
