@@ -1,11 +1,15 @@
 package com.example.PrintAppPOC.Controllers;
 
 import com.example.PrintAppPOC.DataTransferObjects.UserDto;
+import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
+import com.example.PrintAppPOC.Exceptions.UnknownException;
 import com.example.PrintAppPOC.Exceptions.UsernameConstraintException;
 import com.example.PrintAppPOC.Responses.CreateUserWithTokenResponse;
+import com.example.PrintAppPOC.Responses.StatusResponse;
 import com.example.PrintAppPOC.Security.CustomUserDetailService;
 import com.example.PrintAppPOC.Security.JwtTokenHelper;
 import com.example.PrintAppPOC.Services.UserService;
+import com.twilio.base.Resource;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,10 +42,21 @@ public class UserController {
         String token = this.jwtTokenHelper.generateToken(userDetails);
         return new ResponseEntity<>(new CreateUserWithTokenResponse(true,token,"Welcome Onboard"), HttpStatus.CREATED);
     }
-    @PutMapping("updateUser/{userId}")
-    public ResponseEntity<UserDto> updateUser(@RequestBody UserDto userDto,@PathVariable String userId){
-        UserDto userDto1 = userService.updateUser(userDto,userId);
-        return ResponseEntity.ok(userDto1);
+    @PutMapping("updateUser")
+    public ResponseEntity<StatusResponse> updateUser(@RequestBody UserDto userDto){
+        try {
+            userService.updateUser(userDto);
+            return ResponseEntity.ok(new StatusResponse("Successfully Updated User",true));
+        }
+        catch (ResourceNotFoundException ex){
+            throw ex;
+        }
+        catch (TransactionSystemException ex){
+            throw new UsernameConstraintException("Invalid Username. The username must be between 2 to 20 characters.");
+        }
+        catch (Exception e){
+            throw new UnknownException(e.getMessage());
+        }
     }
     @GetMapping("getById/{userId}")
     public ResponseEntity<UserDto> getUserById(@PathVariable String userId){

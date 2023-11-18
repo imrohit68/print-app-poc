@@ -8,6 +8,7 @@ import com.example.PrintAppPOC.Services.UserService;
 import com.example.PrintAppPOC.Security.JwtTokenHelper;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,9 +28,12 @@ public class UserImpl implements UserService {
     }
 
     @Override
-    public UserDto updateUser(UserDto userDto, String userId) {
-        Users user = userRepo.findById(userId).orElseThrow(()->new ResourceNotFoundException("user","mobileNumber",userId));
-        return modelMapper.map(user,UserDto.class);
+    public UserDto updateUser(UserDto userDto) {
+        Users user = userRepo.findById(userDto.getMobileNumber()).orElseThrow(()->new ResourceNotFoundException("user","mobileNumber",userDto.getMobileNumber()));
+        user.setIcon(userDto.getIcon());
+        user.setName(userDto.getName());
+        Users updatedUser = userRepo.save(user);
+        return modelMapper.map(updatedUser,UserDto.class);
     }
 
     @Override

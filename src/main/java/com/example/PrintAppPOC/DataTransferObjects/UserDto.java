@@ -13,4 +13,5 @@ import lombok.Setter;
 public class UserDto {
     private String mobileNumber;
     private String name;
+    private String icon;
 }

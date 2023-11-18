@@ -22,6 +22,7 @@ public class Users implements UserDetails{
     private String mobileNumber;
     @Size(min = 2,max = 20)
     private String name;
+    private String icon;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
