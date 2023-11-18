@@ -2,6 +2,7 @@ package com.example.PrintAppPOC.Exceptions;
 
 import com.example.PrintAppPOC.Responses.NewUserResponse;
 import com.example.PrintAppPOC.Responses.StatusResponse;
+import io.jsonwebtoken.JwtException;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -50,5 +51,9 @@ public class GlobalExceptions extends ResponseEntityExceptionHandler {
     @ExceptionHandler(UnknownException.class)
     public ResponseEntity<StatusResponse> unknownException(UnknownException e){
         return new ResponseEntity<>(new StatusResponse(e.getMessage(),false),HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+    @ExceptionHandler(JwtException.class)
+    public ResponseEntity<StatusResponse> jwtException(JwtException e){
+        return new ResponseEntity<>(new StatusResponse(e.getMessage(),false),HttpStatus.UNAUTHORIZED);
     }
 }
