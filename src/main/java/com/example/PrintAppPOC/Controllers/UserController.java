@@ -1,6 +1,7 @@
 package com.example.PrintAppPOC.Controllers;
 
 import com.example.PrintAppPOC.DataTransferObjects.UserDto;
+import com.example.PrintAppPOC.Exceptions.InvalidTokenException;
 import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
 import com.example.PrintAppPOC.Exceptions.UnknownException;
 import com.example.PrintAppPOC.Exceptions.UsernameConstraintException;
@@ -43,7 +44,7 @@ public class UserController {
         return new ResponseEntity<>(new CreateUserWithTokenResponse(true,token,"Welcome Onboard"), HttpStatus.CREATED);
     }
     @PutMapping("updateUser")
-    public ResponseEntity<StatusResponse> updateUser(@RequestBody UserDto userDto){
+    public ResponseEntity<StatusResponse> updateUser(@RequestBody UserDto userDto,@RequestHeader("Authorization") String token){
         try {
             userService.updateUser(userDto);
             return ResponseEntity.ok(new StatusResponse("Successfully Updated User",true));
@@ -59,17 +60,17 @@ public class UserController {
         }
     }
     @GetMapping("getById/{userId}")
-    public ResponseEntity<UserDto> getUserById(@PathVariable String userId){
+    public ResponseEntity<UserDto> getUserById(@PathVariable String userId,@RequestHeader("Authorization") String token){
         UserDto userDto = userService.getById(userId);
         return ResponseEntity.ok(userDto);
     }
     @GetMapping("getAllUser")
-    public ResponseEntity<List<UserDto>> getAllUser(){
+    public ResponseEntity<List<UserDto>> getAllUser(@RequestHeader("Authorization") String token){
         List<UserDto> userDto = userService.getAll();
         return ResponseEntity.ok(userDto);
     }
     @DeleteMapping("deleteUser/{userId}")
-    public String deleteUser(@PathVariable String userId){
+    public String deleteUser(@PathVariable String userId,@RequestHeader("Authorization") String token){
         userService.deleteUser(userId);
         return "Deleted Successfully";
     }

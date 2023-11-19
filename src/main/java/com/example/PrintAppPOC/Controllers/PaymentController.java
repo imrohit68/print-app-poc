@@ -1,5 +1,6 @@
 package com.example.PrintAppPOC.Controllers;
 
+import com.example.PrintAppPOC.Exceptions.InvalidTokenException;
 import com.example.PrintAppPOC.Responses.OrderResponse;
 import com.example.PrintAppPOC.Entities.Orders;
 import com.razorpay.Order;
@@ -9,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
 
@@ -25,7 +23,7 @@ public class PaymentController {
     private static final String secret_key = "wAJVZqvWEwWR7dkHaDun54qH";
 
     @PostMapping("/payOrder")
-    public ResponseEntity<OrderResponse> createOrder(@RequestBody Orders orders){
+    public ResponseEntity<OrderResponse> createOrder(@RequestBody Orders orders,@RequestHeader("Authorization") String token){
         try {
             client = new RazorpayClient(secret_Id,secret_key);
             Order order = createRazorPayOrder(orders.getOrderAmount());

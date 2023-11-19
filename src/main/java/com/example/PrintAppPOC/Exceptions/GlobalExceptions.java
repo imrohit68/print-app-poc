@@ -46,7 +46,7 @@ public class GlobalExceptions extends ResponseEntityExceptionHandler {
     }
     @ExceptionHandler(InvalidTokenException.class)
     public ResponseEntity<StatusResponse> invalidToken(InvalidTokenException ex){
-        return new ResponseEntity<>(new StatusResponse(ex.getMessage(),false),HttpStatus.UNAUTHORIZED);
+        return new ResponseEntity<>(new StatusResponse(ex.getMessage(),false),HttpStatus.NOT_FOUND);
     }
     @ExceptionHandler(UnknownException.class)
     public ResponseEntity<StatusResponse> unknownException(UnknownException e){
