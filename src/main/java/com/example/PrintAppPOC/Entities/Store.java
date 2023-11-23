@@ -23,5 +23,6 @@ public class Store  {
     private String password;
     private String longitude;
     private String latitude;
+    private String streetAddress;
 
 }

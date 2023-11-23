@@ -39,14 +39,12 @@ public class DocumentFileImpl implements FileDocumentService {
         Blob blob = storage.get(bucketName, fileName);
         ByteArrayResource resource = new ByteArrayResource(
                 blob.getContent());
-
         return resource;
     }
 
     @Override
     public boolean deleteFile(String fileName) {
         Blob blob = storage.get(bucketName, fileName);
-
         return blob.delete();
     }
 

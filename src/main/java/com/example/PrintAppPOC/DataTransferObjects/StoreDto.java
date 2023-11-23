@@ -14,4 +14,5 @@ public class StoreDto {
     private String storeName;
     private String longitude;
     private String latitude;
+    private String streetAddress;
 }
