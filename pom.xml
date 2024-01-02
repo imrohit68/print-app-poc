@@ -112,16 +112,9 @@
 			<version>3.0.4</version>
 		</dependency>
 		<dependency>
-			<groupId>com.aspose</groupId>
-			<artifactId>aspose-words</artifactId>
-			<version>22.11</version>
-			<classifier>jdk17</classifier>
-		</dependency>
-		<dependency>
-			<groupId>com.aspose</groupId>
-			<artifactId>aspose-words</artifactId>
-			<version>22.11</version>
-			<classifier>javadoc</classifier>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.2</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
