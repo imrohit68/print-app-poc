@@ -56,4 +56,12 @@ public class GlobalExceptions extends ResponseEntityExceptionHandler {
     public ResponseEntity<StatusResponse> jwtException(JwtException e){
         return new ResponseEntity<>(new StatusResponse(e.getMessage(),false),HttpStatus.UNAUTHORIZED);
     }
+    @ExceptionHandler(WrongFormatException.class)
+    public ResponseEntity<StatusResponse> wrongFormatException(WrongFormatException e){
+        return new ResponseEntity<>(new StatusResponse(e.getMessage(),false),HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(MissingParamException.class)
+    public ResponseEntity<StatusResponse> missingParamException(MissingParamException e){
+        return new ResponseEntity<>(new StatusResponse(e.getMessage(),false),HttpStatus.BAD_REQUEST);
+    }
 }
