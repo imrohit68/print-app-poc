@@ -21,6 +21,7 @@ public class Orders {
     @OneToMany
     private List<Files> fileNames;
     private BigInteger orderAmount;
+    private String paymentId;
     @ManyToOne
     private Store store;
     @ManyToOne

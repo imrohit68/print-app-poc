@@ -1,18 +1,23 @@
 package com.example.PrintAppPOC.Services.ServiceImpl;
 
 import com.example.PrintAppPOC.DataTransferObjects.OrderDto;
+import com.example.PrintAppPOC.Entities.Files;
 import com.example.PrintAppPOC.Entities.Orders;
 import com.example.PrintAppPOC.Entities.Store;
 import com.example.PrintAppPOC.Entities.Users;
 import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
+import com.example.PrintAppPOC.Repositories.FileRepo;
 import com.example.PrintAppPOC.Repositories.OrderRepo;
 import com.example.PrintAppPOC.Repositories.StoreRepo;
 import com.example.PrintAppPOC.Repositories.UserRepo;
+import com.example.PrintAppPOC.Services.FileService;
 import com.example.PrintAppPOC.Services.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.weaver.ast.Or;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,9 +28,18 @@ public class OrderServiceImpl implements OrderService {
     private final StoreRepo storeRepo;
     private final ModelMapper modelMapper;
     private final UserRepo userRepo;
+    private final FileRepo fileRepo;
     @Override
     public OrderDto createOrder(OrderDto orderDto,String storeId,String userId) {
-        Orders order = modelMapper.map(orderDto,Orders.class);
+        Orders order = new Orders();
+        List<Files> files = new ArrayList<>();
+        for (String x:orderDto.getFileNames()){
+            Files file = fileRepo.findById(x) .orElseThrow(()-> new ResourceNotFoundException("File","Id",x));
+            files.add(file);
+        }
+        order.setFileNames(files);
+        order.setOrderAmount(orderDto.getOrderAmount());
+        order.setPaymentId(orderDto.getPaymentId());
         Users users = userRepo.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("User","mobileNumber",userId));
         Store store = storeRepo.findById(storeId)
@@ -39,7 +53,12 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto updateOrder(OrderDto orderDto, Integer id) {
         Orders orders = orderRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Order","orderId",id.toString()));
-        orders.setFileNames(orderDto.getFileNames());
+        List<Files> files = new ArrayList<>();
+        for (String x:orderDto.getFileNames()){
+            Files file = fileRepo.findById(x) .orElseThrow(()-> new ResourceNotFoundException("File","Id",x));
+            files.add(file);
+        }
+        orders.setFileNames(files);
         return modelMapper.map(orders,OrderDto.class);
     }
 

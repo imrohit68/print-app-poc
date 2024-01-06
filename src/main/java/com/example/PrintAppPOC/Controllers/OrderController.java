@@ -1,7 +1,7 @@
 package com.example.PrintAppPOC.Controllers;
 
 import com.example.PrintAppPOC.DataTransferObjects.OrderDto;
-import com.example.PrintAppPOC.Exceptions.InvalidTokenException;
+import com.example.PrintAppPOC.Responses.StatusResponse;
 import com.example.PrintAppPOC.Services.OrderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,10 +16,10 @@ import java.util.List;
 public class OrderController {
     private final OrderService orderService;
 
-    @PostMapping("create/{storeId}/{userId}")
-    public ResponseEntity<OrderDto> createOrder(@RequestBody OrderDto orderDto,@PathVariable String storeId,@PathVariable String userId,@RequestHeader("Authorization") String token){
-        OrderDto order = orderService.createOrder(orderDto,storeId,userId);
-        return new ResponseEntity<>(order, HttpStatus.CREATED);
+    @PostMapping("/create")
+    public ResponseEntity<StatusResponse> createOrder(@RequestBody OrderDto orderDto, @RequestHeader("Authorization") String token){
+        OrderDto order = orderService.createOrder(orderDto,orderDto.getStoreId(),orderDto.getUserId());
+        return new ResponseEntity<>(new StatusResponse("Order Placed Successfully",true), HttpStatus.CREATED);
     }
     @PutMapping("update/{orderId}")
     public ResponseEntity<OrderDto> updateOrder(@RequestBody OrderDto orderDto,@PathVariable Integer orderId,@RequestHeader("Authorization") String token){

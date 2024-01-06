@@ -1,6 +1,7 @@
 package com.example.PrintAppPOC.Controllers;
 
 
+import com.example.PrintAppPOC.Responses.FileUploadResponse;
 import com.example.PrintAppPOC.Services.FileDocumentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.ByteArrayResource;
@@ -27,13 +28,13 @@ public class DocumentFileController {
         return ResponseEntity.ok(files);
     }
 
-    @PostMapping("upload")
-    public ResponseEntity<String> uploadFile(
+    @PostMapping("/upload")
+    public ResponseEntity<FileUploadResponse> uploadFile(
             @RequestParam MultipartFile file) throws IOException {
 
         String fileId = fileService.uploadFile(file);
 
-        return ResponseEntity.ok("File uploaded successfully : "+fileId);
+        return ResponseEntity.ok(new FileUploadResponse(fileId,true));
     }
 
     @DeleteMapping("delete")

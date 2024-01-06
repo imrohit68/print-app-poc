@@ -2,6 +2,7 @@ package com.example.PrintAppPOC.Controllers;
 
 import com.example.PrintAppPOC.DataTransferObjects.FileDto;
 import com.example.PrintAppPOC.Exceptions.InvalidTokenException;
+import com.example.PrintAppPOC.Responses.StatusResponse;
 import com.example.PrintAppPOC.Services.FileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,9 @@ public class FileController {
     private final FileService fileEntityService;
 
     @PostMapping("create")
-    public ResponseEntity<FileDto> create(@RequestBody FileDto fileDto,@RequestHeader("Authorization") String token){
+    public ResponseEntity<StatusResponse> create(@RequestBody FileDto fileDto, @RequestHeader("Authorization") String token){
         FileDto fileDto1 = fileEntityService.createFile(fileDto);
-        return new ResponseEntity<>(fileDto1, HttpStatus.CREATED);
+        return new ResponseEntity<>(new StatusResponse("File Created Successfully",true), HttpStatus.CREATED);
     }
     @PutMapping("update/{fileId}")
     public ResponseEntity<FileDto> update(@RequestBody FileDto fileDto,@PathVariable String fileId,@RequestHeader("Authorization") String token){
