@@ -2,6 +2,7 @@ package com.example.PrintAppPOC.Entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToOne;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.*;
@@ -23,6 +24,8 @@ public class Users implements UserDetails{
     @Size(min = 2,max = 20)
     private String name;
     private String icon;
+    @OneToOne
+    private Store store;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

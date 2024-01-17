@@ -10,4 +10,5 @@ public interface StoreService {
     List<StoreDto> getAllStores();
     StoreDto findStoreById(String id);
     void deleteStore(String id);
+    String getByToken(String token);
 }

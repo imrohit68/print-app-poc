@@ -6,11 +6,9 @@ import com.example.PrintAppPOC.Exceptions.InvalidTokenException;
 import com.example.PrintAppPOC.Exceptions.MobileNumberValidationException;
 import com.example.PrintAppPOC.Requests.JwtAuthRequest;
 import com.example.PrintAppPOC.Requests.OtpSendRequest;
-import com.example.PrintAppPOC.Responses.CreateTokenResponse;
-import com.example.PrintAppPOC.Responses.HomeResponse;
-import com.example.PrintAppPOC.Responses.Info;
-import com.example.PrintAppPOC.Responses.StatusResponse;
+import com.example.PrintAppPOC.Responses.*;
 import com.example.PrintAppPOC.Services.ServiceImpl.OtpService;
+import com.example.PrintAppPOC.Services.StoreService;
 import com.example.PrintAppPOC.Services.UserService;
 import com.example.PrintAppPOC.Security.CustomUserDetailService;
 import com.example.PrintAppPOC.Security.JwtTokenHelper;
@@ -31,6 +29,7 @@ public class AuthController {
     private final CustomUserDetailService customUserDetailService;
     private final AuthenticationManager authenticationManager;
     private final OtpService otpService;
+    private final StoreService storeService;
     @PostMapping("/login")
     public ResponseEntity<CreateTokenResponse> createToken(@RequestBody JwtAuthRequest request){
             if(request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))){
@@ -51,6 +50,22 @@ public class AuthController {
             else{
                 throw new CantCreateToken("Something went wrong. Please try again later");
             }
+    }
+    @PostMapping("/login/store")
+    public ResponseEntity<StoreLoginResponse> createTokenStore(@RequestBody JwtAuthRequest request){
+        if(request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))){
+            this.authenticate(request.getMobileNumber());
+            UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
+            String token = this.jwtTokenHelper.generateToken(userDetails);
+            String storeId = this.storeService.getByToken(token);
+            return new ResponseEntity<>(new StoreLoginResponse(storeId),HttpStatus.OK);
+        }
+        else if(request.getOtp()!=(otpService.getCacheOtp(request.getMobileNumber()))){
+            throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
+        }
+        else{
+            throw new CantCreateToken("Something went wrong. Please try again later");
+        }
     }
     @GetMapping()
     public ResponseEntity<HomeResponse> userDetails(@RequestHeader("Authorization") String token){

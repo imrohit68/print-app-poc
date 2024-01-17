@@ -1,12 +1,16 @@
 package com.example.PrintAppPOC.Services.ServiceImpl;
 
 import com.example.PrintAppPOC.DataTransferObjects.StoreDto;
+import com.example.PrintAppPOC.DataTransferObjects.UserDto;
 import com.example.PrintAppPOC.Entities.Store;
 import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
 import com.example.PrintAppPOC.Repositories.StoreRepo;
+import com.example.PrintAppPOC.Repositories.UserRepo;
 import com.example.PrintAppPOC.Services.StoreService;
+import com.example.PrintAppPOC.Services.UserService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -17,6 +21,7 @@ import java.util.List;
 public class StoreServiceImpl implements StoreService {
     private final StoreRepo storeRepo;
     private final ModelMapper modelMapper;
+    private final UserService userService;
     @Override
     public StoreDto createStore(StoreDto storeDto) {
         Store store = modelMapper.map(storeDto, Store.class);
@@ -54,5 +59,11 @@ public class StoreServiceImpl implements StoreService {
         Store store = storeRepo.findById(id)
                 .orElseThrow(()->new ResourceNotFoundException("Store","storeId",id));
         storeRepo.delete(store);
+    }
+
+    @Override
+    public String getByToken(String token) {
+        UserDto userDto = userService.getByToken(token);
+        return userDto.getStore().getMobileNumber();
     }
 }
