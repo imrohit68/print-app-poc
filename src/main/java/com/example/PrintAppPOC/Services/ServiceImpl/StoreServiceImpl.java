@@ -3,6 +3,7 @@ package com.example.PrintAppPOC.Services.ServiceImpl;
 import com.example.PrintAppPOC.DataTransferObjects.StoreDto;
 import com.example.PrintAppPOC.DataTransferObjects.UserDto;
 import com.example.PrintAppPOC.Entities.Store;
+import com.example.PrintAppPOC.Exceptions.NewUserTokenException;
 import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
 import com.example.PrintAppPOC.Repositories.StoreRepo;
 import com.example.PrintAppPOC.Repositories.UserRepo;

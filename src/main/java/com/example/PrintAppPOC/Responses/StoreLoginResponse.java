@@ -9,5 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class StoreLoginResponse {
     private String mobileNumber;
+    private String token;
 }
 

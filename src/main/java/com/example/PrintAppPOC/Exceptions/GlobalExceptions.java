@@ -64,4 +64,8 @@ public class GlobalExceptions extends ResponseEntityExceptionHandler {
     public ResponseEntity<StatusResponse> missingParamException(MissingParamException e){
         return new ResponseEntity<>(new StatusResponse(e.getMessage(),false),HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(StoreDoesNotExist.class)
+    public ResponseEntity<StatusResponse> storeDoesNotExist(Exception e){
+        return new ResponseEntity<>(new StatusResponse("Store not associated",false),HttpStatus.UNAUTHORIZED);
+    }
 }

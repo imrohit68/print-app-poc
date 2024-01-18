@@ -1,9 +1,7 @@
 package com.example.PrintAppPOC.Controllers;
 
 import com.example.PrintAppPOC.DataTransferObjects.*;
-import com.example.PrintAppPOC.Exceptions.CantCreateToken;
-import com.example.PrintAppPOC.Exceptions.InvalidTokenException;
-import com.example.PrintAppPOC.Exceptions.MobileNumberValidationException;
+import com.example.PrintAppPOC.Exceptions.*;
 import com.example.PrintAppPOC.Requests.JwtAuthRequest;
 import com.example.PrintAppPOC.Requests.OtpSendRequest;
 import com.example.PrintAppPOC.Responses.*;
@@ -58,7 +56,7 @@ public class AuthController {
             UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
             String token = this.jwtTokenHelper.generateToken(userDetails);
             String storeId = this.storeService.getByToken(token);
-            return new ResponseEntity<>(new StoreLoginResponse(storeId),HttpStatus.OK);
+            return new ResponseEntity<>(new StoreLoginResponse(storeId,token),HttpStatus.OK);
         }
         else if(request.getOtp()!=(otpService.getCacheOtp(request.getMobileNumber()))){
             throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
@@ -77,6 +75,11 @@ public class AuthController {
         }
         return null;
     }
+    @GetMapping("home/store")
+    public ResponseEntity<StoreLoginResponse>storeDetails(@RequestHeader("Authorization") String token){
+        String mobileNumber = storeService.getByToken(token.substring(7));
+        return new ResponseEntity<>(new StoreLoginResponse(mobileNumber,token),HttpStatus.OK);
+    }
     @PostMapping ( "/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendRequest otpSendDto){
         String  mobileNumber = otpSendDto.getMobileNumber();
@@ -91,6 +94,34 @@ public class AuthController {
             return ResponseEntity.ok(new StatusResponse("OTP sent successfully",true));
 
         }catch (Exception e){
+            System.out.println(e.getMessage());
+            return new ResponseEntity<>(new StatusResponse("Something went wrong. Please try again later",false),HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+    @PostMapping ( "/requestOtp/store")
+    public ResponseEntity<StatusResponse> getOtpStore(@RequestBody OtpSendRequest otpSendDto){
+        String  mobileNumber = otpSendDto.getMobileNumber();
+        if(mobileNumber==null){
+            throw new MobileNumberValidationException("Please enter mobile number");
+        }
+        if(mobileNumber.length()!=13){
+            throw new MobileNumberValidationException("Please enter a valid 10 digit mobile number");
+        }
+        try{
+            UserDto userDto = userService.getById(mobileNumber);
+            if(userDto.getStore()==null){
+                throw new StoreDoesNotExist();
+            }
+            otpService.generateOtp(otpSendDto.getMobileNumber());
+            return ResponseEntity.ok(new StatusResponse("OTP sent successfully",true));
+
+        }catch (StoreDoesNotExist e){
+            throw  e;
+        }
+        catch (ResourceNotFoundException e){
+            throw new StoreDoesNotExist();
+        }
+        catch (Exception e){
             System.out.println(e.getMessage());
             return new ResponseEntity<>(new StatusResponse("Something went wrong. Please try again later",false),HttpStatus.SERVICE_UNAVAILABLE);
         }
