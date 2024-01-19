@@ -35,7 +35,7 @@ public class OrderController {
         List<OrderDto> allOrder = orderService.getAllOrder();
         return new ResponseEntity<>(allOrder,HttpStatus.OK);
     }
-    @GetMapping("getByStore")
+    @PostMapping("getByStore")
     public ResponseEntity<List<FetchOrderResponse>> getOrderByStore(@RequestBody OrderFetchRequest orderFetchRequest, @RequestHeader("Authorization") String token){
         List<FetchOrderResponse> orderResponses = orderService.orderByStore(orderFetchRequest);
         return new ResponseEntity<>(orderResponses,HttpStatus.OK);

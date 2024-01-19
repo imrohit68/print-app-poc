@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class StoreLoginResponse {
-    private boolean status;
+    private boolean success;
     private String message;
     private DataStoreLogin data;
 }
