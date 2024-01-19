@@ -4,13 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.checkerframework.common.value.qual.ArrayLen;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
-public class Data {
+public class DataStoreLogin {
     private String storeId;
     private String token;
 }

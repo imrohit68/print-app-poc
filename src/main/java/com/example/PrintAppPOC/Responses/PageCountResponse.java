@@ -2,6 +2,7 @@ package com.example.PrintAppPOC.Responses;
 
 
 import lombok.*;
+import lombok.Data;
 
 @Data
 @AllArgsConstructor

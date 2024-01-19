@@ -12,5 +12,5 @@ import lombok.Setter;
 public class StoreLoginResponse {
     private boolean status;
     private String message;
-    private Data data;
+    private DataStoreLogin data;
 }

@@ -56,7 +56,7 @@ public class AuthController {
             UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
             String token = this.jwtTokenHelper.generateToken(userDetails);
             String storeId = this.storeService.getByToken(token);
-            return new ResponseEntity<>(new StoreLoginResponse(true,"Glad to see you again",new Data(storeId,token)),HttpStatus.OK);
+            return new ResponseEntity<>(new StoreLoginResponse(true,"Glad to see you again",new DataStoreLogin(storeId,token)),HttpStatus.OK);
         }
         else if(request.getOtp()!=(otpService.getCacheOtp(request.getMobileNumber()))){
             throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
