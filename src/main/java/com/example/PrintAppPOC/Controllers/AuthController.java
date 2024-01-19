@@ -56,13 +56,13 @@ public class AuthController {
             UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
             String token = this.jwtTokenHelper.generateToken(userDetails);
             String storeId = this.storeService.getByToken(token);
-            return new ResponseEntity<>(new StoreLoginResponse(storeId,token),HttpStatus.OK);
+            return new ResponseEntity<>(new StoreLoginResponse(true,"Glad to see you again",new Data(storeId,token)),HttpStatus.OK);
         }
         else if(request.getOtp()!=(otpService.getCacheOtp(request.getMobileNumber()))){
             throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
         }
         else{
-            throw new CantCreateToken("Something went wrong. Please try again later");
+            throw new UnknownException("Something went wrong. Please try again later");
         }
     }
     @GetMapping()
@@ -75,11 +75,11 @@ public class AuthController {
         }
         return null;
     }
-    @GetMapping("home/store")
-    public ResponseEntity<StoreLoginResponse>storeDetails(@RequestHeader("Authorization") String token){
-        String mobileNumber = storeService.getByToken(token.substring(7));
-        return new ResponseEntity<>(new StoreLoginResponse(mobileNumber,token),HttpStatus.OK);
-    }
+//    @GetMapping("home/store")
+//    public ResponseEntity<StoreLoginResponse>storeDetails(@RequestHeader("Authorization") String token){
+//        String mobileNumber = storeService.getByToken(token.substring(7));
+//        return new ResponseEntity<>(new StoreLoginResponse(mobileNumber,token),HttpStatus.OK);
+//    }
     @PostMapping ( "/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendRequest otpSendDto){
         String  mobileNumber = otpSendDto.getMobileNumber();
