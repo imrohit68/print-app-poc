@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.math.BigInteger;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -18,13 +19,14 @@ public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private List<Files> fileNames;
     private BigInteger orderAmount;
     private String paymentId;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Store store;
     @ManyToOne
     private Users user;
+    private LocalDateTime localDateTime;
 
 }

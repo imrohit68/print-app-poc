@@ -1,9 +1,13 @@
 package com.example.PrintAppPOC.Controllers;
 
 import com.example.PrintAppPOC.DataTransferObjects.OrderDto;
+import com.example.PrintAppPOC.Entities.Orders;
+import com.example.PrintAppPOC.Requests.OrderFetchRequest;
+import com.example.PrintAppPOC.Responses.FetchOrderResponse;
 import com.example.PrintAppPOC.Responses.StatusResponse;
 import com.example.PrintAppPOC.Services.OrderService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +35,10 @@ public class OrderController {
         List<OrderDto> allOrder = orderService.getAllOrder();
         return new ResponseEntity<>(allOrder,HttpStatus.OK);
     }
-    @GetMapping("getByStore/{storeId}")
-    public ResponseEntity<List<OrderDto>> getOrderByStore(@PathVariable String storeId,@RequestHeader("Authorization") String token){
-        List<OrderDto> orderDto = orderService.orderByStore(storeId);
-        return new ResponseEntity<>(orderDto,HttpStatus.OK);
+    @GetMapping("getByStore")
+    public ResponseEntity<List<FetchOrderResponse>> getOrderByStore(@RequestBody OrderFetchRequest orderFetchRequest, @RequestHeader("Authorization") String token){
+        List<FetchOrderResponse> orderResponses = orderService.orderByStore(orderFetchRequest);
+        return new ResponseEntity<>(orderResponses,HttpStatus.OK);
     }
     @GetMapping("getByUser/{userId}")
     public ResponseEntity<List<OrderDto>> getOrderByUser(@PathVariable String userId,@RequestHeader("Authorization") String token){

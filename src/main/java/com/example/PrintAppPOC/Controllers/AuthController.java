@@ -75,11 +75,11 @@ public class AuthController {
         }
         return null;
     }
-//    @GetMapping("home/store")
-//    public ResponseEntity<StoreLoginResponse>storeDetails(@RequestHeader("Authorization") String token){
-//        String mobileNumber = storeService.getByToken(token.substring(7));
-//        return new ResponseEntity<>(new StoreLoginResponse(mobileNumber,token),HttpStatus.OK);
-//    }
+    @GetMapping("home/store")
+    public ResponseEntity<StoreLoginResponse>storeDetails(@RequestHeader("Authorization") String token){
+        String mobileNumber = storeService.getByToken(token.substring(7));
+        return new ResponseEntity<>(new StoreLoginResponse(true,"Glad to see you again",new DataStoreLogin(mobileNumber,token)),HttpStatus.OK);
+    }
     @PostMapping ( "/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendRequest otpSendDto){
         String  mobileNumber = otpSendDto.getMobileNumber();

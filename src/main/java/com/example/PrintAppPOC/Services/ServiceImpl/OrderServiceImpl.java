@@ -10,13 +10,18 @@ import com.example.PrintAppPOC.Repositories.FileRepo;
 import com.example.PrintAppPOC.Repositories.OrderRepo;
 import com.example.PrintAppPOC.Repositories.StoreRepo;
 import com.example.PrintAppPOC.Repositories.UserRepo;
-import com.example.PrintAppPOC.Services.FileService;
+import com.example.PrintAppPOC.Requests.OrderFetchRequest;
+import com.example.PrintAppPOC.Responses.FetchOrderResponse;
 import com.example.PrintAppPOC.Services.OrderService;
+import com.razorpay.Order;
 import lombok.RequiredArgsConstructor;
-import org.aspectj.weaver.ast.Or;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(()->new ResourceNotFoundException("Store","storeId",storeId));
         order.setUser(users);
         order.setStore(store);
+        order.setLocalDateTime(LocalDateTime.now());
         Orders orders = orderRepo.save(order);
         return modelMapper.map(orders,OrderDto.class);
     }
@@ -86,15 +92,19 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> orderByStore(String storeId) {
-        Store store = storeRepo.findById(storeId)
-                .orElseThrow(()->new ResourceNotFoundException("Store","storeId",storeId));
-        List<Orders> orderDto = orderRepo.findByStore(store);
-        List<OrderDto> order = orderDto.stream()
-                .map(orders -> modelMapper.map(orders,OrderDto.class)).collect(Collectors.toList());
-        return order;
+    public List<FetchOrderResponse> orderByStore(OrderFetchRequest orderFetchRequest) {
+        Pageable pageable = PageRequest.of(orderFetchRequest.getPageNumber(),10);
+        Store store = storeRepo.findById(orderFetchRequest.getStoreId())
+                .orElseThrow(()->new ResourceNotFoundException("Store","storeId", orderFetchRequest.getStoreId()));
+        Page<Orders> orders = orderRepo.findByStore(store,pageable);
+        List<Orders> orders1 = orders.stream().toList();
+        List<FetchOrderResponse> fetchOrderResponses  = new ArrayList<>();
+        for (Orders x : orders1){
+            FetchOrderResponse fetchOrderResponse = new FetchOrderResponse(x.getFileNames().stream().map(files -> files.getFileName()).collect(Collectors.toList()), x.getOrderAmount(),x.getUser().getMobileNumber(),x.getLocalDateTime());
+            fetchOrderResponses.add(fetchOrderResponse);
+        }
+        return fetchOrderResponses;
     }
-
     @Override
     public List<OrderDto> orderByUser(String userId) {
         Users user = userRepo.findById(userId)
