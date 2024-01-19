@@ -3,6 +3,7 @@ package com.example.PrintAppPOC.Configurations;
 import com.example.PrintAppPOC.Security.CustomUserDetailService;
 import com.example.PrintAppPOC.Security.JwtAuthenticationEntryPoint;
 import com.example.PrintAppPOC.Security.JwtAuthenticationFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -19,7 +20,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.servlet.HandlerExceptionResolver;
+
+import java.util.Collections;
 
 @Configuration
 @EnableWebSecurity
@@ -33,7 +38,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .cors().disable()
+                .cors((cors)->cors.configurationSource(new CorsConfigurationSource() {
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration corsConfiguration = new CorsConfiguration();
+                        corsConfiguration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                        corsConfiguration.setAllowCredentials(true);
+                        corsConfiguration.setMaxAge(3600L);
+                        corsConfiguration.setAllowedMethods(Collections.singletonList("*"));
+                        corsConfiguration.setAllowedHeaders(Collections.singletonList("*"));
+                        return corsConfiguration;
+                    }
+                }))
                 .authorizeHttpRequests()
                 .requestMatchers("/api/auth/**","/api/user/create","/swagger-ui/**","/api/v1/auth/**","/v3/api-docs/**", "/v3/api-docs.yaml","/swagger-ui.html")
                 .permitAll()
