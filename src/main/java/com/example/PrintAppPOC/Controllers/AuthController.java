@@ -75,6 +75,13 @@ public class AuthController {
         }
         return null;
     }
+    @PostMapping("/verifyToken")
+    public ResponseEntity<StatusResponse> verifyToken(@RequestHeader("Authorization") String token){
+        if(token==null){
+            return new ResponseEntity<>(new StatusResponse("Token is Null",false),HttpStatus.UNAUTHORIZED);
+        }
+        return new ResponseEntity<>(new StatusResponse("Token Verified",true),HttpStatus.OK);
+    }
     @GetMapping("home/store")
     public ResponseEntity<StoreLoginResponse>storeDetails(@RequestHeader("Authorization") String token){
         String mobileNumber = storeService.getByToken(token.substring(7));
