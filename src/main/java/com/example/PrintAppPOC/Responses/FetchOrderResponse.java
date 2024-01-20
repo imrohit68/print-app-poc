@@ -18,4 +18,5 @@ public class FetchOrderResponse {
     private BigInteger orderAmount;
     private String userId;
     private LocalDateTime localDateTime;
+    private String userName;
 }

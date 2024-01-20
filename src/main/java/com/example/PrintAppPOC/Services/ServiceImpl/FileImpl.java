@@ -10,6 +10,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,10 +40,12 @@ public class FileImpl implements FileService {
     }
 
     @Override
-    public FileDto getById(String fileId) {
-        Files files = fileRepo.findById(fileId)
-                .orElseThrow(()-> new ResourceNotFoundException("File","fileId",fileId));
-        return modelMapper.map(files,FileDto.class);
+    public List<FileDto> getById(List<String> fileId) {
+        List<FileDto> fileDtos  = new ArrayList<>();
+        for(String s: fileId){
+            fileDtos.add(modelMapper.map(fileRepo.findById(s),FileDto.class));
+        }
+        return fileDtos;
     }
     @Override
     public List<FileDto> getAllFiles() {
