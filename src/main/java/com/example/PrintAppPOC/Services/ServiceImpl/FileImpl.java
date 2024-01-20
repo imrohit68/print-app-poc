@@ -41,10 +41,7 @@ public class FileImpl implements FileService {
 
     @Override
     public List<FileDto> getById(List<String> fileId) {
-        List<FileDto> fileDtos  = new ArrayList<>();
-        for(String s: fileId){
-            fileDtos.add(modelMapper.map(fileRepo.findById(s),FileDto.class));
-        }
+        List<FileDto> fileDtos  = fileRepo.findAllById(fileId).stream().map(files -> modelMapper.map(files,FileDto.class)).collect(Collectors.toList());
         return fileDtos;
     }
     @Override
