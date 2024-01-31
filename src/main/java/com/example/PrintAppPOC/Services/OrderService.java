@@ -14,6 +14,7 @@ public interface OrderService {
     OrderDto createOrder(OrderDto orderDto,String storeId,String userId);
     OrderDto updateOrder(OrderDto orderDto,Integer id);
     OrderDto getOrderById(Integer orderId);
+    OrderDto updateOrderToCompleted(Integer id);
     List<OrderDto> getAllOrder();
     void deleteOrder(Integer orderId);
     List<FetchOrderResponse> orderByStore(OrderFetchRequest orderFetchRequest);

@@ -6,6 +6,7 @@ import com.example.PrintAppPOC.Entities.Orders;
 import com.example.PrintAppPOC.Entities.Store;
 import com.example.PrintAppPOC.Entities.Users;
 import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
+import com.example.PrintAppPOC.Entities.OrderStatus;
 import com.example.PrintAppPOC.Repositories.FileRepo;
 import com.example.PrintAppPOC.Repositories.OrderRepo;
 import com.example.PrintAppPOC.Repositories.StoreRepo;
@@ -13,7 +14,6 @@ import com.example.PrintAppPOC.Repositories.UserRepo;
 import com.example.PrintAppPOC.Requests.OrderFetchRequest;
 import com.example.PrintAppPOC.Responses.FetchOrderResponse;
 import com.example.PrintAppPOC.Services.OrderService;
-import com.razorpay.Order;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -51,6 +51,7 @@ public class OrderServiceImpl implements OrderService {
                 .orElseThrow(()->new ResourceNotFoundException("Store","storeId",storeId));
         order.setUser(users);
         order.setStore(store);
+        order.setOrderStatus(OrderStatus.PENDING);
         order.setLocalDateTime(LocalDateTime.now());
         Orders orders = orderRepo.save(order);
         return modelMapper.map(orders,OrderDto.class);
@@ -68,10 +69,19 @@ public class OrderServiceImpl implements OrderService {
         return modelMapper.map(orders,OrderDto.class);
     }
 
+
     @Override
     public OrderDto getOrderById(Integer orderId) {
         Orders orders = orderRepo.findById(orderId)
                 .orElseThrow(()-> new ResourceNotFoundException("Order","orderId",orderId.toString()));
+        return modelMapper.map(orders,OrderDto.class);
+    }
+
+    @Override
+    public OrderDto updateOrderToCompleted(Integer id) {
+        Orders orders = orderRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Order","orderId",id.toString()));
+        orders.setOrderStatus(OrderStatus.COMPLETED);
+        orderRepo.save(orders);
         return modelMapper.map(orders,OrderDto.class);
     }
 
@@ -100,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
         List<Orders> orders1 = orders.stream().toList();
         List<FetchOrderResponse> fetchOrderResponses  = new ArrayList<>();
         for (Orders x : orders1){
-            FetchOrderResponse fetchOrderResponse = new FetchOrderResponse(x.getFileNames().stream().map(files -> files.getFileName()).collect(Collectors.toList()), x.getOrderAmount(),x.getUser().getMobileNumber(),x.getLocalDateTime(),x.getUser().getName());
+            FetchOrderResponse fetchOrderResponse = new FetchOrderResponse(x.getId(),x.getFileNames().stream().map(files -> files.getFileName()).collect(Collectors.toList()), x.getOrderAmount(),x.getUser().getMobileNumber(),x.getLocalDateTime(),x.getUser().getName());
             fetchOrderResponses.add(fetchOrderResponse);
         }
         return fetchOrderResponses;

@@ -14,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class FetchOrderResponse {
+    private Integer id;
     private List<String> fileNames;
     private BigInteger orderAmount;
     private String userId;

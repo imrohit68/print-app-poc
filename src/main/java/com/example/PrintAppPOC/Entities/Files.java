@@ -2,11 +2,14 @@ package com.example.PrintAppPOC.Entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 
 @Entity
@@ -22,6 +25,6 @@ public class Files {
     private String startPage;
     private String endPage;
     private Integer numberOfCopies;
-    @ManyToOne
-    private Orders orders;
+    @ManyToMany
+    private List<Orders> orders;
 }

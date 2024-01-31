@@ -1,6 +1,6 @@
 package com.example.PrintAppPOC.DataTransferObjects;
 
-import com.example.PrintAppPOC.Entities.Files;
+import com.example.PrintAppPOC.Entities.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

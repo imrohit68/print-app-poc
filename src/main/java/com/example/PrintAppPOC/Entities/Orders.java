@@ -19,7 +19,7 @@ public class Orders {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
-    @OneToMany(fetch = FetchType.EAGER)
+    @ManyToMany(fetch = FetchType.EAGER)
     private List<Files> fileNames;
     private BigInteger orderAmount;
     private String paymentId;
@@ -28,5 +28,7 @@ public class Orders {
     @ManyToOne
     private Users user;
     private LocalDateTime localDateTime;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
 }
