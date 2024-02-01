@@ -1,5 +1,6 @@
 package com.example.PrintAppPOC.Responses;
 
+import com.example.PrintAppPOC.Entities.OrderStatus;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,4 +21,5 @@ public class FetchOrderResponse {
     private String userId;
     private LocalDateTime localDateTime;
     private String userName;
+    private OrderStatus orderStatus;
 }

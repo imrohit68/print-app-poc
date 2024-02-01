@@ -110,7 +110,7 @@ public class OrderServiceImpl implements OrderService {
         List<Orders> orders1 = orders.stream().toList();
         List<FetchOrderResponse> fetchOrderResponses  = new ArrayList<>();
         for (Orders x : orders1){
-            FetchOrderResponse fetchOrderResponse = new FetchOrderResponse(x.getId(),x.getFileNames().stream().map(files -> files.getFileName()).collect(Collectors.toList()), x.getOrderAmount(),x.getUser().getMobileNumber(),x.getLocalDateTime(),x.getUser().getName());
+            FetchOrderResponse fetchOrderResponse = new FetchOrderResponse(x.getId(),x.getFileNames().stream().map(files -> files.getFileName()).collect(Collectors.toList()), x.getOrderAmount(),x.getUser().getMobileNumber(),x.getLocalDateTime(),x.getUser().getName(),x.getOrderStatus());
             fetchOrderResponses.add(fetchOrderResponse);
         }
         return fetchOrderResponses;
