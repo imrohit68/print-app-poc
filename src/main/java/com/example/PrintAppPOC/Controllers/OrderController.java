@@ -4,6 +4,7 @@ import com.example.PrintAppPOC.DataTransferObjects.OrderDto;
 import com.example.PrintAppPOC.Entities.Orders;
 import com.example.PrintAppPOC.Repositories.OrderRepo;
 import com.example.PrintAppPOC.Requests.OrderFetchRequest;
+import com.example.PrintAppPOC.Requests.OrderRequest;
 import com.example.PrintAppPOC.Requests.OrderStatusUpdateRequest;
 import com.example.PrintAppPOC.Responses.FetchOrderResponse;
 import com.example.PrintAppPOC.Responses.OrderResponse;
@@ -47,9 +48,9 @@ public class OrderController {
         OrderDto orderDto = orderService.updateOrderToCompleted(orderStatusUpdateRequest.getId());
         return new ResponseEntity<>(new StatusResponse(String.format("Order status updated to : %s",orderDto.getOrderStatus()),true),HttpStatus.OK);
     }
-    @GetMapping("getByUser/{userId}")
-    public ResponseEntity<List<OrderDto>> getOrderByUser(@PathVariable String userId,@RequestHeader("Authorization") String token){
-        List<OrderDto> orderDto = orderService.orderByUser(userId);
+    @PostMapping("getByUser")
+    public ResponseEntity<List<OrderDto>> getOrderByUser(@RequestBody OrderRequest orderRequest, @RequestHeader("Authorization") String token){
+        List<OrderDto> orderDto = orderService.orderByUser(orderRequest.getId());
         return new ResponseEntity<>(orderDto,HttpStatus.OK);
     }
     @GetMapping("getById/{orderId}")

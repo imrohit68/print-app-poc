@@ -126,7 +126,11 @@ public class OrderServiceImpl implements OrderService {
         Users user = userRepo.findById(userId)
                 .orElseThrow(()-> new ResourceNotFoundException("User","mobileNumber",userId));
         List<Orders> orders = orderRepo.findByUser(user);
-        List<OrderDto> orderDto = orders.stream().map(orders1 -> modelMapper.map(orders1,OrderDto.class)).collect(Collectors.toList());
-        return orderDto;
+        List<OrderDto> orderDtos = new ArrayList<>();
+        for (Orders o : orders){
+            OrderDto orderDto1 = new OrderDto(o.getFileNames().stream().map(files -> files.getFileName()).collect(Collectors.toList()), o.getOrderAmount(), o.getPaymentId(), o.getUser().getMobileNumber(), o.getStore().getMobileNumber(), o.getLocalDateTime(), o.getOrderStatus());
+            orderDtos.add(orderDto1);
+        }
+        return orderDtos;
     }
 }
