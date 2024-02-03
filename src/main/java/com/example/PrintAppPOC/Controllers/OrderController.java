@@ -44,8 +44,8 @@ public class OrderController {
     }
     @PostMapping("/updateOrderStatus")
     public ResponseEntity<StatusResponse> updateOrderStatus(@RequestBody OrderStatusUpdateRequest orderStatusUpdateRequest){
-        orderService.updateOrderToCompleted(orderStatusUpdateRequest.getId());
-        return new ResponseEntity<>(new StatusResponse("Order Updated Successfully",true),HttpStatus.OK);
+        OrderDto orderDto = orderService.updateOrderToCompleted(orderStatusUpdateRequest.getId());
+        return new ResponseEntity<>(new StatusResponse(String.format("Order status updated to : %s",orderDto.getOrderStatus()),true),HttpStatus.OK);
     }
     @GetMapping("getByUser/{userId}")
     public ResponseEntity<List<OrderDto>> getOrderByUser(@PathVariable String userId,@RequestHeader("Authorization") String token){

@@ -80,8 +80,14 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto updateOrderToCompleted(Integer id) {
         Orders orders = orderRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Order","orderId",id.toString()));
-        orders.setOrderStatus(OrderStatus.COMPLETED);
-        orderRepo.save(orders);
+        if(orders.getOrderStatus().equals("PENDING")){
+            orders.setOrderStatus(OrderStatus.COMPLETED);
+            orderRepo.save(orders);
+        }
+        else{
+            orders.setOrderStatus(OrderStatus.PENDING);
+            orderRepo.save(orders);
+        }
         return modelMapper.map(orders,OrderDto.class);
     }
 

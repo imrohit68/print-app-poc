@@ -20,5 +20,5 @@ public class OrderDto {
     private String userId;
     private String storeId;
     private LocalDateTime localDateTime;
-
+    private OrderStatus orderStatus;
 }
