@@ -80,7 +80,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto updateOrderToCompleted(Integer id) {
         Orders orders = orderRepo.findById(id).orElseThrow(()-> new ResourceNotFoundException("Order","orderId",id.toString()));
-        if(orders.getOrderStatus().equals("PENDING")){
+        if(orders.getOrderStatus().equals(OrderStatus.PENDING)){
             orders.setOrderStatus(OrderStatus.COMPLETED);
             orderRepo.save(orders);
         }
