@@ -18,6 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -42,7 +44,7 @@ public class AuthController {
                 CreateTokenResponse createTokenResponse = new CreateTokenResponse(false,data);
                 return new ResponseEntity<>(createTokenResponse,HttpStatus.OK);
             }
-            else if(request.getOtp()!=(otpService.getCacheOtp(request.getMobileNumber()))){
+            else if(!Objects.equals(request.getOtp(), otpService.getCacheOtp(request.getMobileNumber()))){
                 throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
             }
             else{
