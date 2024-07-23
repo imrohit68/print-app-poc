@@ -7,8 +7,7 @@ import java.io.IOException;
 import java.util.List;
 
 public interface FileDocumentService {
-    List<String> listOfFiles();
-    ByteArrayResource downloadFile(String fileName);
+    ByteArrayResource downloadFile(String fileName) throws IOException;
     boolean deleteFile(String fileName);
     String uploadFile(MultipartFile file) throws IOException;
 }

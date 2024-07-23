@@ -20,42 +20,25 @@ import java.util.List;
 @RequiredArgsConstructor
 public class DocumentFileController {
     private final FileDocumentService fileService;
-    @GetMapping
-    public ResponseEntity<List<String>> listOfFiles() {
-
-        List<String> files = fileService.listOfFiles();
-
-        return ResponseEntity.ok(files);
-    }
 
     @PostMapping("/upload")
-    public ResponseEntity<FileUploadResponse> uploadFile(
-            @RequestParam MultipartFile file) throws IOException {
-
+    public ResponseEntity<FileUploadResponse> uploadFile(@RequestParam MultipartFile file) throws IOException {
         String fileId = fileService.uploadFile(file);
-
         return ResponseEntity.ok(new FileUploadResponse(fileId,true));
     }
 
-    @DeleteMapping("delete")
-    public ResponseEntity<String> deleteFile(
-            @RequestParam String fileName) {
-
+    @DeleteMapping("/delete")
+    public ResponseEntity<String> deleteFile(@RequestParam String fileName) {
         fileService.deleteFile(fileName);
-
         return ResponseEntity.ok(" File deleted successfully");
     }
 
-    @GetMapping("download")
-    public ResponseEntity<Resource> downloadFile(
-            @RequestParam String fileName)  {
-
+    @GetMapping("/download")
+    public ResponseEntity<Resource> downloadFile(@RequestParam String fileName) throws IOException {
         ByteArrayResource resource = fileService.downloadFile(fileName);
-
         HttpHeaders headers = new HttpHeaders();
         headers.add(HttpHeaders.CONTENT_DISPOSITION,
                 "attachment; filename=\"" + fileName + "\"");
-
         return ResponseEntity.ok().
                 contentType(MediaType.APPLICATION_OCTET_STREAM).
                 headers(headers).body(resource);

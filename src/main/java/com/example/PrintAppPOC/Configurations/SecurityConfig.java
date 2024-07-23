@@ -51,7 +51,7 @@ public class SecurityConfig {
                     }
                 }))
                 .authorizeHttpRequests()
-                .requestMatchers("/api/auth/**","/api/user/create","/swagger-ui/**","/api/v1/auth/**","/v3/api-docs/**", "/v3/api-docs.yaml","/swagger-ui.html")
+                .requestMatchers("/api/auth/**","/api/user/create","/swagger-ui/**","/api/v1/auth/**","/v3/api-docs/**", "/v3/api-docs.yaml","/swagger-ui.html","/api/data/download")
                 .permitAll()
                 .anyRequest()
                 .authenticated()
