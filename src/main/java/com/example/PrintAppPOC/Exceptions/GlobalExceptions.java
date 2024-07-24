@@ -3,41 +3,56 @@ package com.example.PrintAppPOC.Exceptions;
 import com.example.PrintAppPOC.Responses.NewUserResponse;
 import com.example.PrintAppPOC.Responses.StatusResponse;
 import io.jsonwebtoken.JwtException;
-import org.jetbrains.annotations.NotNull;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.MissingRequestHeaderException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 public class GlobalExceptions extends ResponseEntityExceptionHandler {
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        List<ObjectError> validationErrorList = ex.getBindingResult().getAllErrors();
+        List<String> errors = validationErrorList.stream().map(DefaultMessageSourceResolvable::getDefaultMessage).collect(Collectors.toList());
+        String errorMessage = "[" + String.join(", ", errors) + "]";
+        return new ResponseEntity<>(new StatusResponse(errorMessage,false), HttpStatus.BAD_REQUEST);
+    }
     @ExceptionHandler(ResourceNotFoundException.class)
-    public ResponseEntity<StatusResponse> resourceNotFoundExceptionHandler(@NotNull ResourceNotFoundException ex) {
+    public ResponseEntity<StatusResponse> resourceNotFoundExceptionHandler( ResourceNotFoundException ex) {
         return new ResponseEntity<>(new StatusResponse(ex.getMessage(),false), HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler(CantCreateToken.class)
-    public ResponseEntity<StatusResponse> cantCreateToken(@NotNull CantCreateToken message) {
+    public ResponseEntity<StatusResponse> cantCreateToken( CantCreateToken message) {
         return new ResponseEntity<>(new StatusResponse(message.getMessage(),false), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<StatusResponse> userAlreadyExists(@NotNull UserAlreadyExistsException ex) {
+    public ResponseEntity<StatusResponse> userAlreadyExists( UserAlreadyExistsException ex) {
         return new ResponseEntity<>(new StatusResponse( ex.getMessage(),false), HttpStatus.NOT_ACCEPTABLE);
     }
 
     @ExceptionHandler(MobileNumberValidationException.class)
-    public ResponseEntity<StatusResponse> inValidMobileNumber(@NotNull MobileNumberValidationException ex) {
+    public ResponseEntity<StatusResponse> inValidMobileNumber(MobileNumberValidationException ex) {
         return new ResponseEntity<>(new StatusResponse(ex.getMessage(),false),HttpStatus.NOT_ACCEPTABLE);
     }
     @ExceptionHandler(NewUserTokenException.class)
-    public ResponseEntity<NewUserResponse> newUSerResponse(@NotNull NewUserTokenException ex){
+    public ResponseEntity<NewUserResponse> newUSerResponse( NewUserTokenException ex){
         return new ResponseEntity<>(new NewUserResponse(true, ex.getMessage()),HttpStatus.OK);
     }
     @ExceptionHandler(UsernameConstraintException.class)
-    public ResponseEntity<StatusResponse> userNameNotValid(@NotNull UsernameConstraintException ex){
+    public ResponseEntity<StatusResponse> userNameNotValid( UsernameConstraintException ex){
         return new ResponseEntity<>(new StatusResponse( ex.getMessage(),false),HttpStatus.NOT_ACCEPTABLE);
     }
     @ExceptionHandler(MissingRequestHeaderException.class)

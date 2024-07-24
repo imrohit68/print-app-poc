@@ -11,8 +11,11 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class AmazonConfig {
-    private String accessKeyId = "AKIAUV4RAIH7STG5EZ5I";
-    private String accessKeySecret="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";
+    @Value("${aws.access.key.id}")
+    private String accessKeyId;
+    @Value("${aws.secret.access.key}")
+    private String accessKeySecret;
+    @Value("${aws.s3.region}")
     private String awsS3Region = "ap-south-1";
 
     @Bean

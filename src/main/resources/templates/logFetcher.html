@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Fetcher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            width: 80%;
+            max-width: 800px;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #007bff;
+        }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+        input[type="datetime-local"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-top: 5px;
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px;
+            background-color: #007bff;
+            border: none;
+            color: #fff;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #logs, #live-logs {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        .log-item {
+            padding: 8px;
+            border-bottom: 1px solid #ddd;
+        }
+        .log-item:last-child {
+            border-bottom: none;
+        }
+        #error {
+            margin-top: 20px;
+            color: red;
+        }
+        .button-container {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+    <script>
+        let liveLogsInterval;
+
+        async function fetchLogs() {
+            stopLiveLogs(); // Stop live logs fetching when fetching by time range
+
+            const start = document.getElementById('start').value;
+            const end = document.getElementById('end').value;
+            const response = await fetch(`/getLogs/${encodeURIComponent(start)}/${encodeURIComponent(end)}`);
+            const errorContainer = document.getElementById('error');
+            const logsContainer = document.getElementById('logs');
+
+            if (response.ok) {
+                const logs = await response.json();
+                logsContainer.innerHTML = '';
+                errorContainer.textContent = ''; // Clear previous error messages
+
+                if (logs.length > 0) {
+                    logs.forEach(log => {
+                        const logItem = document.createElement('div');
+                        logItem.className = 'log-item';
+                        logItem.textContent = log;
+                        logsContainer.appendChild(logItem);
+                    });
+                } else {
+                    errorContainer.textContent = 'No logs found for the specified time period.';
+                }
+            } else {
+                errorContainer.textContent = 'Failed to fetch logs: ' + response.statusText;
+            }
+        }
+
+        async function fetchRecentLogs() {
+            const response = await fetch('/recentLogs');
+            const errorContainer = document.getElementById('error');
+            const liveLogsContainer = document.getElementById('live-logs');
+
+            if (response.ok) {
+                const logs = await response.json();
+                liveLogsContainer.innerHTML = '';
+                errorContainer.textContent = ''; // Clear previous error messages
+
+                if (logs.length > 0) {
+                    logs.forEach(log => {
+                        const logItem = document.createElement('div');
+                        logItem.className = 'log-item';
+                        logItem.textContent = log;
+                        liveLogsContainer.appendChild(logItem);
+                    });
+                } else {
+                    errorContainer.textContent = 'No recent logs available.';
+                }
+            } else {
+                errorContainer.textContent = 'Failed to fetch recent logs: ' + response.statusText;
+            }
+        }
+
+        function startLiveLogs() {
+            if (!liveLogsInterval) {
+                liveLogsInterval = setInterval(fetchRecentLogs, 10000);
+                fetchRecentLogs(); // Fetch immediately
+            }
+        }
+
+        function stopLiveLogs() {
+            if (liveLogsInterval) {
+                clearInterval(liveLogsInterval);
+                liveLogsInterval = null;
+            }
+            document.getElementById('live-logs').innerHTML = ''; // Clear live logs
+        }
+
+        window.onload = () => {
+            // No initial fetching of live logs
+        }
+    </script>
+</head>
+<body>
+<div class="container">
+    <h1>Log Fetcher</h1>
+    <form onsubmit="event.preventDefault(); fetchLogs();">
+        <label for="start">Start DateTime:</label>
+        <input type="datetime-local" id="start" name="start" required>
+
+        <label for="end">End DateTime:</label>
+        <input type="datetime-local" id="end" name="end" required>
+    </form>
+    <div class="button-container">
+        <button onclick="fetchLogs()">Fetch Logs</button>
+        <button onclick="startLiveLogs()">Start Live Logs</button>
+        <button onclick="stopLiveLogs()">Stop Live Logs</button>
+    </div>
+    <div id="logs">
+        <!-- Logs for the specified time range will be displayed here -->
+    </div>
+    <div id="live-logs">
+        <h2>Recent Logs</h2>
+        <!-- Recent logs will be displayed here -->
+    </div>
+    <div id="error">
+        <!-- Error messages will be displayed here -->
+    </div>
+</div>
+</body>
+</html>

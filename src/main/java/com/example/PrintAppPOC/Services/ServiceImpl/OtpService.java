@@ -1,6 +1,11 @@
 package com.example.PrintAppPOC.Services.ServiceImpl;
 
 import com.example.PrintAppPOC.Configurations.TwilioConfig;
+import com.example.PrintAppPOC.DataTransferObjects.UserDto;
+import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
+import com.example.PrintAppPOC.Exceptions.StoreDoesNotExist;
+import com.example.PrintAppPOC.Exceptions.UnknownException;
+import com.example.PrintAppPOC.Services.UserService;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -18,6 +23,8 @@ public class OtpService {
     private static final  Integer EXPIRE_MIN = 5;
     private LoadingCache<String,String> otpCache;
     @Autowired
+    private  UserService userService;
+    @Autowired
     private TwilioConfig twilioConfig;
 
     public OtpService() {
@@ -32,15 +39,35 @@ public class OtpService {
     }
 
     public String generateOtp(String phoneNo){
-        PhoneNumber to = new PhoneNumber(phoneNo);
-        PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
-        String otp = getRandomOTP(phoneNo);
-        String otpMessage = "Dear Customer , Your OTP is " + otp + ". Use this otp to log in to Print Application";
-        Message message = Message
-                .creator(to, from,
-                        otpMessage)
-                .create();
-        return  otp;
+        try {
+            PhoneNumber to = new PhoneNumber(phoneNo);
+            PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
+            String otp = getRandomOTP(phoneNo);
+            String otpMessage = "Dear Customer , Your OTP is " + otp + ". Use this otp to log in to Print Application";
+            Message.creator(to, from, otpMessage)
+                    .create();
+            return  otp;
+        }catch (Exception e) {
+            throw new UnknownException("Something went wrong");
+        }
+    }
+    public void generateOtpStore(String mobileNumber) {
+        try{
+            UserDto userDto = userService.getById(mobileNumber);
+            if(userDto.getStore()==null){
+                throw new StoreDoesNotExist();
+            }
+            generateOtp(mobileNumber);
+
+        }catch (StoreDoesNotExist e){
+            throw  e;
+        }
+        catch (ResourceNotFoundException e){
+            throw new StoreDoesNotExist();
+        }
+        catch (Exception e){
+            throw new UnknownException(e.getMessage());
+        }
     }
 
     private String getRandomOTP(String phoneNo) {
@@ -49,7 +76,6 @@ public class OtpService {
         otpCache.put(phoneNo,otp);
         return otp;
     }
-    //get saved otp
     public String getCacheOtp(String key){
         try{
             return otpCache.get(key);

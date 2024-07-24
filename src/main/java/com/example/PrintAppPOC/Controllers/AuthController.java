@@ -10,6 +10,7 @@ import com.example.PrintAppPOC.Services.StoreService;
 import com.example.PrintAppPOC.Services.UserService;
 import com.example.PrintAppPOC.Security.CustomUserDetailService;
 import com.example.PrintAppPOC.Security.JwtTokenHelper;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,13 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -30,113 +37,81 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final OtpService otpService;
     private final StoreService storeService;
+
     @PostMapping("/login")
-    public ResponseEntity<CreateTokenResponse> createToken(@RequestBody JwtAuthRequest request){
-            if(request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))){
-                this.authenticate(request.getMobileNumber());
-                UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
-                String token = this.jwtTokenHelper.generateToken(userDetails);
-                UserDto userDto = userService.getByToken(token);
-                Info data = new Info();
-                data.setToken(token);
-                data.setUserName(userDto.getName());
-                data.setMobileNumber(userDto.getMobileNumber());
-                CreateTokenResponse createTokenResponse = new CreateTokenResponse(false,data);
-                return new ResponseEntity<>(createTokenResponse,HttpStatus.OK);
-            }
-            else if(!Objects.equals(request.getOtp(), otpService.getCacheOtp(request.getMobileNumber()))){
-                throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
-            }
-            else{
-                throw new CantCreateToken("Something went wrong. Please try again later");
-            }
+    public ResponseEntity<CreateTokenResponse> createToken(@RequestBody JwtAuthRequest request) {
+        if (request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))) {
+            this.authenticate(request.getMobileNumber());
+            UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
+            String token = this.jwtTokenHelper.generateToken(userDetails);
+            UserDto userDto = userService.getByToken(token);
+            Info data = new Info(token, userDto.getName(), userDto.getMobileNumber());
+            CreateTokenResponse createTokenResponse = new CreateTokenResponse(false, data);
+            otpService.clearOtp(request.getMobileNumber());
+            return new ResponseEntity<>(createTokenResponse, HttpStatus.OK);
+        } else if (!Objects.equals(request.getOtp(), otpService.getCacheOtp(request.getMobileNumber()))) {
+            throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
+        } else {
+            throw new CantCreateToken("Something went wrong. Please try again later");
+        }
     }
+
     @PostMapping("/login/store")
-    public ResponseEntity<StoreLoginResponse> createTokenStore(@RequestBody JwtAuthRequest request){
-        if(request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))){
+    public ResponseEntity<StoreLoginResponse> createTokenStore(@RequestBody JwtAuthRequest request) {
+        if (request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))) {
             this.authenticate(request.getMobileNumber());
             UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
             String token = this.jwtTokenHelper.generateToken(userDetails);
             String storeId = this.storeService.getByToken(token);
-            return new ResponseEntity<>(new StoreLoginResponse(true,"Glad to see you again",new DataStoreLogin(storeId,token)),HttpStatus.OK);
-        }
-        else if(request.getOtp()!=(otpService.getCacheOtp(request.getMobileNumber()))){
+            return new ResponseEntity<>(new StoreLoginResponse(true, "Glad to see you again", new DataStoreLogin(storeId, token)), HttpStatus.OK);
+        } else if (!Objects.equals(request.getOtp(), otpService.getCacheOtp(request.getMobileNumber()))) {
             throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
-        }
-        else{
+        } else {
             throw new UnknownException("Something went wrong. Please try again later");
         }
     }
+
     @GetMapping()
-    public ResponseEntity<HomeResponse> userDetails(@RequestHeader("Authorization") String token){
-        try{
-            UserDto userDto = userService.getByToken(token.substring(7));
-            return new ResponseEntity<>(new HomeResponse(userDto.getMobileNumber(),userDto.getName(),token.substring(7)),HttpStatus.OK);
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-        }
-        return null;
+    public ResponseEntity<HomeResponse> userDetails(@RequestHeader("Authorization") String token) {
+        UserDto userDto = userService.getByToken(token.substring(7));
+        return new ResponseEntity<>(new HomeResponse(userDto.getMobileNumber(), userDto.getName(), token.substring(7)), HttpStatus.OK);
     }
+
+    //TODO : Check  whether the api is needed
     @PostMapping("/verifyToken")
-    public ResponseEntity<StatusResponse> verifyToken(@RequestHeader("Authorization") String token){
-        if(token==null){
-            return new ResponseEntity<>(new StatusResponse("Token is Null",false),HttpStatus.UNAUTHORIZED);
-        }
-        return new ResponseEntity<>(new StatusResponse("Token Verified",true),HttpStatus.OK);
+    public ResponseEntity<StatusResponse> verifyToken(@RequestHeader("Authorization") String token) {
+        return new ResponseEntity<>(new StatusResponse("Token Verified", true), HttpStatus.OK);
     }
-    @GetMapping("home/store")
-    public ResponseEntity<StoreLoginResponse>storeDetails(@RequestHeader("Authorization") String token){
+
+    @GetMapping("/home/store")
+    public ResponseEntity<StoreLoginResponse> storeDetails(@RequestHeader("Authorization") String token) {
         String mobileNumber = storeService.getByToken(token.substring(7));
-        return new ResponseEntity<>(new StoreLoginResponse(true,"Glad to see you again",new DataStoreLogin(mobileNumber,token)),HttpStatus.OK);
+        return new ResponseEntity<>(new StoreLoginResponse(true, "Glad to see you again", new DataStoreLogin(mobileNumber, token)), HttpStatus.OK);
     }
-    @PostMapping ( "/requestOtp")
-    public ResponseEntity<StatusResponse> getOtp(@RequestBody OtpSendRequest otpSendDto){
-        String  mobileNumber = otpSendDto.getMobileNumber();
-        if(mobileNumber==null){
-            throw new MobileNumberValidationException("Please enter mobile number");
-        }
-        if(mobileNumber.length()!=13){
-            throw new MobileNumberValidationException("Please enter a valid 10 digit mobile number");
-        }
-        try{
-            otpService.generateOtp(otpSendDto.getMobileNumber());
-            return ResponseEntity.ok(new StatusResponse("OTP sent successfully",true));
 
-        }catch (Exception e){
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(new StatusResponse("Something went wrong. Please try again later",false),HttpStatus.SERVICE_UNAVAILABLE);
-        }
+    @PostMapping("/requestOtp")
+    public ResponseEntity<StatusResponse> getOtp(@RequestBody @Valid OtpSendRequest otpSendDto) {
+        otpService.generateOtp(otpSendDto.getMobileNumber());
+        return ResponseEntity.ok(new StatusResponse("OTP sent successfully", true));
     }
-    @PostMapping ( "/requestOtp/store")
-    public ResponseEntity<StatusResponse> getOtpStore(@RequestBody OtpSendRequest otpSendDto){
-        String  mobileNumber = otpSendDto.getMobileNumber();
-        if(mobileNumber==null){
-            throw new MobileNumberValidationException("Please enter mobile number");
-        }
-        if(mobileNumber.length()!=13){
-            throw new MobileNumberValidationException("Please enter a valid 10 digit mobile number");
-        }
-        try{
-            UserDto userDto = userService.getById(mobileNumber);
-            if(userDto.getStore()==null){
-                throw new StoreDoesNotExist();
-            }
-            otpService.generateOtp(otpSendDto.getMobileNumber());
-            return ResponseEntity.ok(new StatusResponse("OTP sent successfully",true));
 
-        }catch (StoreDoesNotExist e){
-            throw  e;
-        }
-        catch (ResourceNotFoundException e){
-            throw new StoreDoesNotExist();
-        }
-        catch (Exception e){
-            System.out.println(e.getMessage());
-            return new ResponseEntity<>(new StatusResponse("Something went wrong. Please try again later",false),HttpStatus.SERVICE_UNAVAILABLE);
-        }
+    @PostMapping("/requestOtp/store")
+    public ResponseEntity<StatusResponse> getOtpStore(@RequestBody @Valid OtpSendRequest otpSendDto) {
+        otpService.generateOtpStore(otpSendDto.getMobileNumber());
+        return ResponseEntity.ok(new StatusResponse("OTP sent successfully", true));
     }
+
     private void authenticate(String username) {
-        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username," ");
+        UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(username, " ");
         this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+    }
+
+    @GetMapping("/logs")
+    public List<String> logs() {
+        try (Stream<String> lines = Files.lines(Paths.get("application.log"))) {
+            return lines.skip(Math.max(0, Files.lines(Paths.get("application.log")).count() - 100)).collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
