@@ -19,13 +19,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.List;
+
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
 
 @RestController
 @RequestMapping("/api/auth")
@@ -45,7 +41,7 @@ public class AuthController {
             UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
             String token = this.jwtTokenHelper.generateToken(userDetails);
             UserDto userDto = userService.getByToken(token);
-            Info data = new Info(token, userDto.getName(), userDto.getMobileNumber());
+            Info data = new Info(userDto.getName(),token,userDto.getMobileNumber());
             CreateTokenResponse createTokenResponse = new CreateTokenResponse(false, data);
             otpService.clearOtp(request.getMobileNumber());
             return new ResponseEntity<>(createTokenResponse, HttpStatus.OK);
@@ -106,12 +102,4 @@ public class AuthController {
         this.authenticationManager.authenticate(usernamePasswordAuthenticationToken);
     }
 
-    @GetMapping("/logs")
-    public List<String> logs() {
-        try (Stream<String> lines = Files.lines(Paths.get("application.log"))) {
-            return lines.skip(Math.max(0, Files.lines(Paths.get("application.log")).count() - 100)).collect(Collectors.toList());
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
 }
