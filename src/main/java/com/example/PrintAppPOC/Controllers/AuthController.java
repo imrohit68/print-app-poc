@@ -36,34 +36,31 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<CreateTokenResponse> createToken(@RequestBody JwtAuthRequest request) {
-        if (request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))) {
+        boolean status = otpService.verifyOtp(request.getMobileNumber(), request.getOtp());
+        if (!status) {
+            throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
+        } else {
             this.authenticate(request.getMobileNumber());
             UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
             String token = this.jwtTokenHelper.generateToken(userDetails);
             UserDto userDto = userService.getByToken(token);
             Info data = new Info(userDto.getName(),token,userDto.getMobileNumber());
             CreateTokenResponse createTokenResponse = new CreateTokenResponse(false, data);
-            otpService.clearOtp(request.getMobileNumber());
             return new ResponseEntity<>(createTokenResponse, HttpStatus.OK);
-        } else if (!Objects.equals(request.getOtp(), otpService.getCacheOtp(request.getMobileNumber()))) {
-            throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
-        } else {
-            throw new CantCreateToken("Something went wrong. Please try again later");
         }
     }
 
     @PostMapping("/login/store")
     public ResponseEntity<StoreLoginResponse> createTokenStore(@RequestBody JwtAuthRequest request) {
-        if (request.getOtp().equals(otpService.getCacheOtp(request.getMobileNumber()))) {
+        boolean status = otpService.verifyOtp(request.getMobileNumber(), request.getOtp());
+        if (!status) {
+            throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
+        } else {
             this.authenticate(request.getMobileNumber());
             UserDetails userDetails = this.customUserDetailService.loadUserByUsername(request.getMobileNumber());
             String token = this.jwtTokenHelper.generateToken(userDetails);
             String storeId = this.storeService.getByToken(token);
             return new ResponseEntity<>(new StoreLoginResponse(true, "Glad to see you again", new DataStoreLogin(storeId, token)), HttpStatus.OK);
-        } else if (!Objects.equals(request.getOtp(), otpService.getCacheOtp(request.getMobileNumber()))) {
-            throw new CantCreateToken("Invalid OTP. Please enter a valid OTP");
-        } else {
-            throw new UnknownException("Something went wrong. Please try again later");
         }
     }
 
@@ -87,8 +84,7 @@ public class AuthController {
 
     @PostMapping("/requestOtp")
     public ResponseEntity<StatusResponse> getOtp(@RequestBody @Valid OtpSendRequest otpSendDto) {
-        otpService.generateOtp(otpSendDto.getMobileNumber());
-        return ResponseEntity.ok(new StatusResponse("OTP sent successfully", true));
+        return ResponseEntity.ok(new StatusResponse(otpService.generateOtp(otpSendDto.getMobileNumber()), true));
     }
 
     @PostMapping("/requestOtp/store")

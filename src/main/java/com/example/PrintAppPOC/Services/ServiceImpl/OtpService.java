@@ -9,8 +9,9 @@ import com.example.PrintAppPOC.Services.UserService;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
-import com.twilio.rest.api.v2010.account.Message;
-import com.twilio.type.PhoneNumber;
+import com.twilio.rest.verify.v2.service.Verification;
+import com.twilio.rest.verify.v2.service.VerificationCheck;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,34 +20,18 @@ import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 @Service
+@RequiredArgsConstructor
 public class OtpService {
-    private static final  Integer EXPIRE_MIN = 5;
-    private LoadingCache<String,String> otpCache;
-    @Autowired
-    private  UserService userService;
-    @Autowired
-    private TwilioConfig twilioConfig;
 
-    public OtpService() {
-        otpCache = CacheBuilder.newBuilder()
-                .expireAfterWrite(EXPIRE_MIN, TimeUnit.MINUTES)
-                .build(new CacheLoader<>() {
-                    @Override
-                    public String load(String s) {
-                        return "";
-                    }
-                });
-    }
-
+    private final UserService userService;
     public String generateOtp(String phoneNo){
         try {
-            PhoneNumber to = new PhoneNumber(phoneNo);
-            PhoneNumber from = new PhoneNumber(twilioConfig.getTrialNumber());
-            String otp = getRandomOTP(phoneNo);
-            String otpMessage = "Dear Customer , Your OTP is " + otp + ". Use this otp to log in to Print Application";
-            Message.creator(to, from, otpMessage)
+            Verification verification = Verification.creator(
+                            "VA657fd4ddc388aff0b5614ba9daaeb2c4",
+                            phoneNo,
+                            "sms")
                     .create();
-            return  otp;
+            return "OTP Sent Successfully";
         }catch (Exception e) {
             throw new UnknownException("Something went wrong");
         }
@@ -69,22 +54,12 @@ public class OtpService {
             throw new UnknownException(e.getMessage());
         }
     }
-
-    private String getRandomOTP(String phoneNo) {
-        String otp =  new DecimalFormat("0000")
-                .format(new Random().nextInt(9999));
-        otpCache.put(phoneNo,otp);
-        return otp;
-    }
-    public String getCacheOtp(String key){
-        try{
-            return otpCache.get(key);
-        }catch (Exception e){
-            return "";
-        }
-    }
-    //clear stored otp
-    public void clearOtp(String key){
-        otpCache.invalidate(key);
+    public boolean verifyOtp(String mobileNumber,String otp){
+        VerificationCheck verificationCheck = VerificationCheck.creator(
+                        "VA657fd4ddc388aff0b5614ba9daaeb2c4")
+                .setTo(mobileNumber)
+                .setCode(otp)
+                .create();
+        return verificationCheck.getStatus().equals("approved");
     }
 }
