@@ -1,23 +1,14 @@
 package com.example.PrintAppPOC.Services.ServiceImpl;
-
-import com.example.PrintAppPOC.Configurations.TwilioConfig;
 import com.example.PrintAppPOC.DataTransferObjects.UserDto;
 import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
 import com.example.PrintAppPOC.Exceptions.StoreDoesNotExist;
 import com.example.PrintAppPOC.Exceptions.UnknownException;
 import com.example.PrintAppPOC.Services.UserService;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.cache.CacheLoader;
-import com.google.common.cache.LoadingCache;
 import com.twilio.rest.verify.v2.service.Verification;
 import com.twilio.rest.verify.v2.service.VerificationCheck;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.text.DecimalFormat;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +24,7 @@ public class OtpService {
                     .create();
             return "OTP Sent Successfully";
         }catch (Exception e) {
-            throw new UnknownException("Something went wrong");
+            throw new UnknownException(e.getMessage());
         }
     }
     public void generateOtpStore(String mobileNumber) {
