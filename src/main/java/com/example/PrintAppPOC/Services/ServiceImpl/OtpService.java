@@ -18,7 +18,7 @@ public class OtpService {
     public String generateOtp(String phoneNo){
         try {
             Verification verification = Verification.creator(
-                            "VA657fd4ddc388aff0b5614ba9daaeb2c4",
+                            "VAd52fe4177609cf18d26d82d284858a36",
                             phoneNo,
                             "sms")
                     .create();
@@ -47,7 +47,7 @@ public class OtpService {
     }
     public boolean verifyOtp(String mobileNumber,String otp){
         VerificationCheck verificationCheck = VerificationCheck.creator(
-                        "VA657fd4ddc388aff0b5614ba9daaeb2c4")
+                        "VAd52fe4177609cf18d26d82d284858a36")
                 .setTo(mobileNumber)
                 .setCode(otp)
                 .create();
