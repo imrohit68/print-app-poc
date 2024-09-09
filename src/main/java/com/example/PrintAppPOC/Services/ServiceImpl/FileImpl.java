@@ -4,6 +4,7 @@ import com.example.PrintAppPOC.DataTransferObjects.FileDto;
 import com.example.PrintAppPOC.Entities.Files;
 import com.example.PrintAppPOC.Exceptions.ResourceNotFoundException;
 import com.example.PrintAppPOC.Repositories.FileRepo;
+import com.example.PrintAppPOC.Responses.FileResponse;
 import com.example.PrintAppPOC.Services.FileService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -40,9 +41,19 @@ public class FileImpl implements FileService {
     }
 
     @Override
-    public List<FileDto> getById(List<String> fileId) {
-        List<FileDto> fileDtos  = fileRepo.findAllById(fileId).stream().map(files -> modelMapper.map(files,FileDto.class)).collect(Collectors.toList());
-        return fileDtos;
+    public FileResponse getById(List<String> fileId) {
+        List<Files> foundFiles = fileRepo.findAllById(fileId);
+        List<String> foundIds = foundFiles.stream().map(Files::getFileName).toList();
+
+        List<String> invalidIds = fileId.stream()
+                .filter(id -> !foundIds.contains(id))
+                .collect(Collectors.toList());
+
+        List<FileDto> fileDtos = foundFiles.stream()
+                .map(files -> modelMapper.map(files, FileDto.class))
+                .collect(Collectors.toList());
+        FileResponse response = new FileResponse(fileDtos,invalidIds);
+        return response;
     }
     @Override
     public List<FileDto> getAllFiles() {

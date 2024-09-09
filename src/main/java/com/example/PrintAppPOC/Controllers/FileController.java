@@ -3,6 +3,7 @@ package com.example.PrintAppPOC.Controllers;
 import com.example.PrintAppPOC.DataTransferObjects.FileDto;
 import com.example.PrintAppPOC.Exceptions.InvalidTokenException;
 import com.example.PrintAppPOC.Requests.CommonRequest;
+import com.example.PrintAppPOC.Responses.FileResponse;
 import com.example.PrintAppPOC.Responses.StatusResponse;
 import com.example.PrintAppPOC.Services.FileService;
 import lombok.RequiredArgsConstructor;
@@ -34,9 +35,9 @@ public class FileController {
         return new ResponseEntity<>(fileDto,HttpStatus.OK);
     }
     @PostMapping("/getById")
-    public ResponseEntity<List<FileDto>> getFileById(@RequestBody CommonRequest commonRequest, @RequestHeader("Authorization") String token){
-        List<FileDto> fileDto = fileEntityService.getById(commonRequest.getId());
-        return new ResponseEntity<>(fileDto,HttpStatus.OK);
+    public ResponseEntity<FileResponse> getFileById(@RequestBody CommonRequest commonRequest, @RequestHeader("Authorization") String token){
+        FileResponse response = fileEntityService.getById(commonRequest.getId());
+        return new ResponseEntity<>(response,HttpStatus.OK);
     }
     @DeleteMapping("/delete/{fileId}")
     public String deleteFile(@PathVariable String fileId,@RequestHeader("Authorization") String token){
