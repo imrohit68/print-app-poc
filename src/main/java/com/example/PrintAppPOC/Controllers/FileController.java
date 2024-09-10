@@ -6,6 +6,7 @@ import com.example.PrintAppPOC.Requests.CommonRequest;
 import com.example.PrintAppPOC.Responses.FileResponse;
 import com.example.PrintAppPOC.Responses.StatusResponse;
 import com.example.PrintAppPOC.Services.FileService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +36,7 @@ public class FileController {
         return new ResponseEntity<>(fileDto,HttpStatus.OK);
     }
     @PostMapping("/getById")
-    public ResponseEntity<FileResponse> getFileById(@RequestBody CommonRequest commonRequest, @RequestHeader("Authorization") String token){
+    public ResponseEntity<FileResponse> getFileById(@RequestBody @Valid CommonRequest commonRequest, @RequestHeader("Authorization") String token){
         FileResponse response = fileEntityService.getById(commonRequest.getId());
         return new ResponseEntity<>(response,HttpStatus.OK);
     }
